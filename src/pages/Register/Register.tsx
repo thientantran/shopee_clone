@@ -1,13 +1,16 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import Input from 'src/components/Input/Input'
-import { getRules } from 'src/utils/rules'
+import { Schema, schema } from 'src/utils/rules'
 
-export interface FormData {
-  email: string
-  password: string
-  confirm_password: string
-}
+// export interface FormData {
+//   email: string
+//   password: string
+//   confirm_password: string
+// }
+
+type FormData = Schema
 
 export default function Register() {
   const {
@@ -15,13 +18,18 @@ export default function Register() {
     handleSubmit,
     getValues,
     formState: { errors }
-  } = useForm<FormData>()
-
-  const rules = getRules(getValues)
-
-  const onSubmit = handleSubmit((data) => {
-    console.log(data)
+  } = useForm<FormData>({
+    resolver: yupResolver(schema)
   })
+
+  // const rules = getRules(getValues)
+
+  const onSubmit = handleSubmit(
+    (data) => {
+      console.log(data)
+    },
+    (errors) => console.log(errors)
+  )
   return (
     <div className='bg-orange'>
       <div className='container mx-auto max-w-7xl px-4'>
@@ -36,7 +44,7 @@ export default function Register() {
                 className='mt-8'
                 errorMessage={errors.email?.message}
                 placeholder='Email'
-                rules={rules.email}
+                // rules={rules.email}
                 autoComplete='on'
               />
               <Input
@@ -46,7 +54,7 @@ export default function Register() {
                 className='mt-8'
                 errorMessage={errors.password?.message}
                 placeholder='Password'
-                rules={rules.password}
+                // rules={rules.password}
                 autoComplete='on'
               />
               <Input
@@ -56,7 +64,7 @@ export default function Register() {
                 className='mt-8'
                 errorMessage={errors.confirm_password?.message}
                 placeholder='Confirm password'
-                rules={rules.confirm_password}
+                // rules={rules.confirm_password}
                 autoComplete='on'
               />
               <div className='mt-2'>
