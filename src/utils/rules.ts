@@ -74,7 +74,7 @@ export const schema = yup.object({
     .required('Nhap lai password la bat buoc')
     .min(6, 'Do dai tu 6-160 ky tu')
     .max(160, 'Do dai tu 6-160 ky tu')
-  // .oneOf([yup.ref('password')], 'Nhap lai password khong khop')
+    .oneOf([yup.ref('password')], 'Nhap lai password khong khop')
 })
 
 export const loginSchema = schema.omit(['confirm_password'])
