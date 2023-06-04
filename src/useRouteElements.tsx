@@ -1,35 +1,84 @@
-import { useRoutes } from 'react-router-dom'
+import { Navigate, Outlet, useRoutes } from 'react-router-dom'
 import MainLayout from './lauputs/MainLayout/MainLayout'
 import RegisterLayout from './lauputs/RegisterLayout/RegisterLayout'
 import Login from './pages/Login/Login'
 import ProductList from './pages/ProductList/ProductList'
+import Profile from './pages/Profile/Profile'
 import Register from './pages/Register/Register'
+const isAuthenticated = true
+//login chua?
+function ProtectedRoute() {
+  return isAuthenticated ? <Outlet /> : <Navigate to='/login' />
+}
+function RejectedRoute() {
+  return !isAuthenticated ? <Outlet /> : <Navigate to='/' />
+}
 
 export default function useRouteElements() {
   const useRouteElements = useRoutes([
+    // {
+    //   path: '/',
+    //   element: (
+    //     <MainLayout>
+    //       <ProductList />
+    //     </MainLayout>
+    //   )
+    // },
+    //Neu duong dan nao` trung voi path, thi se thuc hien cai element, roi neu outlet thi moi tim trong children xem co cai nao giong ko, neu giong thi tra ve element
+    // vi du path 1: =pro,
+    /// thoa dieu kien element 1:, nhay vao children tim thay path 2: profile,
+    // ko pro != profile => ko tra ve duoc
     {
-      path: '/',
-      element: (
-        <MainLayout>
-          <ProductList />
-        </MainLayout>
-      )
+      path: '',
+      element: <ProtectedRoute />,
+      children: [
+        {
+          path: '/profile',
+          element: (
+            <MainLayout>
+              <Profile />
+            </MainLayout>
+          )
+        }
+      ]
+    },
+
+    {
+      path: '',
+      element: <RejectedRoute />,
+      children: [
+        {
+          path: '/login',
+          element: (
+            <RegisterLayout>
+              <Login />
+            </RegisterLayout>
+          )
+        },
+        {
+          path: '/register',
+          element: (
+            <RegisterLayout>
+              <Register />
+            </RegisterLayout>
+          )
+        }
+      ]
     },
     {
-      path: '/login',
-      element: (
-        <RegisterLayout>
-          <Login />
-        </RegisterLayout>
-      )
-    },
-    {
-      path: '/register',
-      element: (
-        <RegisterLayout>
-          <Register />
-        </RegisterLayout>
-      )
+      path: '',
+      element: <ProtectedRoute />,
+      children: [
+        {
+          path: '/',
+          index: true,
+          element: (
+            <MainLayout>
+              <ProductList />
+            </MainLayout>
+          )
+        }
+      ]
     }
   ])
   return useRouteElements
