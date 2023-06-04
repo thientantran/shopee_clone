@@ -6,7 +6,8 @@ export default function Header() {
       <div className='container'>
         <div className='flex justify-end'>
           <Popover
-            className='flex cursor-pointer items-center py-1 hover:text-gray-300'
+            as='span'
+            className='flex cursor-pointer items-center py-1 shadow-sm hover:text-gray-300'
             renderPopover={
               <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
                 <div className='flex flex-col px-3 py-2'>
@@ -46,8 +47,28 @@ export default function Header() {
               />
             </svg>
           </Popover>
-
-          <div className='ml-6 flex cursor-pointer items-center py-1 hover:text-gray-300'>
+          <Popover
+            renderPopover={
+              <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
+                <Link
+                  to='/'
+                  className='hover:bg-stale-100 block w-full bg-white px-4 py-3 text-left hover:text-cyan-500'
+                >
+                  Tai khoan cua toi
+                </Link>
+                <Link
+                  to='/'
+                  className='hover:bg-stale-100 block w-full bg-white px-4 py-3 text-left hover:text-cyan-500'
+                >
+                  Don mua
+                </Link>
+                <button className='hover:bg-stale-100 block w-full bg-white px-4 py-3 text-left hover:text-cyan-500'>
+                  Dang xuat
+                </button>
+              </div>
+            }
+            className='ml-6 flex cursor-pointer items-center py-1 hover:text-gray-300'
+          >
             <div className='mr-2 h-6 w-6 flex-shrink-0'>
               <img
                 src='https://down-vn.img.susercontent.com/file/br-11134226-7qukw-levcx0zgr2n3d2_tn'
@@ -56,7 +77,7 @@ export default function Header() {
               />
             </div>
             <div>thientantm</div>
-          </div>
+          </Popover>
         </div>
         <div className='mt-4 grid grid-cols-12 items-end gap-4'>
           <Link to='/' className='col-span-2'>

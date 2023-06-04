@@ -1,15 +1,17 @@
 import { FloatingPortal, arrow, offset, shift, useFloating } from '@floating-ui/react-dom-interactions'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { ElementType, useId, useRef, useState } from 'react'
 
 interface Props {
   children: React.ReactNode
   renderPopover: React.ReactNode
   className?: string
+  as?: ElementType
+  initialOpen?: boolean
 }
 
-export default function Popover({ children, renderPopover, className }: Props) {
-  const [open, setOpen] = useState(false)
+export default function Popover({ children, renderPopover, className, as: Element = 'div', initialOpen }: Props) {
+  const [open, setOpen] = useState(initialOpen || false)
   const arrowRef = useRef<HTMLElement>(null)
   const { x, y, reference, floating, strategy, middlewareData } = useFloating({
     middleware: [offset(10), shift(), arrow({ element: arrowRef })]
@@ -17,15 +19,15 @@ export default function Popover({ children, renderPopover, className }: Props) {
   const showPopover = () => {
     setOpen(true)
   }
-
+  const id = useId()
   const hidePopover = () => {
     setOpen(false)
   }
   return (
-    <div className={className} onMouseEnter={showPopover} onMouseLeave={hidePopover} ref={reference}>
+    <Element className={className} onMouseEnter={showPopover} onMouseLeave={hidePopover} ref={reference}>
       {children}
 
-      <FloatingPortal>
+      <FloatingPortal id={id}>
         <AnimatePresence>
           {open && (
             <motion.div
@@ -57,6 +59,6 @@ export default function Popover({ children, renderPopover, className }: Props) {
           )}
         </AnimatePresence>
       </FloatingPortal>
-    </div>
+    </Element>
   )
 }
