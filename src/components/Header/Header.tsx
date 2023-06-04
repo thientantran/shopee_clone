@@ -1,29 +1,20 @@
-import { FloatingPortal, arrow, offset, shift, useFloating } from '@floating-ui/react-dom-interactions'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import Popover from '../Popover/Popover'
 export default function Header() {
-  const [open, setOpen] = useState(false)
-  const arrowRef = useRef<HTMLElement>(null)
-  const { x, y, reference, floating, strategy, middlewareData } = useFloating({
-    middleware: [offset(10), shift(), arrow({ element: arrowRef })]
-  })
-  const showPopover = () => {
-    setOpen(true)
-  }
-
-  const hidePopover = () => {
-    setOpen(false)
-  }
   return (
     <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2 text-white'>
       <div className='container'>
         <div className='flex justify-end'>
-          <div
+          <Popover
             className='flex cursor-pointer items-center py-1 hover:text-gray-300'
-            onMouseEnter={showPopover}
-            onMouseLeave={hidePopover}
-            ref={reference}
+            renderPopover={
+              <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
+                <div className='flex flex-col px-3 py-2'>
+                  <button className='px-3 py-2 hover:text-orange'>Tieng Viet</button>
+                  <button className='mt-2 px-3 py-2 hover:text-orange'>Tieng Anh</button>
+                </div>
+              </div>
+            }
           >
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -54,44 +45,7 @@ export default function Header() {
                 d='M19.5 5.25l-7.5 7.5-7.5-7.5m15 6l-7.5 7.5-7.5-7.5'
               />
             </svg>
-            <FloatingPortal>
-              <AnimatePresence>
-                {open && (
-                  <motion.div
-                    ref={floating}
-                    style={{
-                      position: strategy,
-                      top: y ?? 0,
-                      left: x ?? 0,
-                      width: 'max-content',
-                      transformOrigin: `${middlewareData.arrow?.x}px top` // de hover thi zoom tu vi tri mui ten
-                    }}
-                    initial={{ opacity: 0, transform: 'scale(0)' }}
-                    animate={{ opacity: 1, transform: 'scale(1)' }}
-                    exit={{ opacity: 0, transform: 'scale(0)' }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <span
-                      // mui ten
-                      ref={arrowRef}
-                      className='absolute translate-y-[-90%] border-[11px] border-x-transparent border-b-white border-t-transparent'
-                      style={{
-                        left: middlewareData.arrow?.x,
-                        top: middlewareData.arrow?.y,
-                        zIndex: 1
-                      }}
-                    ></span>
-                    <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
-                      <div className='flex flex-col px-3 py-2'>
-                        <button className='px-3 py-2 hover:text-orange'>Tieng Viet</button>
-                        <button className='mt-2 px-3 py-2 hover:text-orange'>Tieng Anh</button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </FloatingPortal>
-          </div>
+          </Popover>
 
           <div className='ml-6 flex cursor-pointer items-center py-1 hover:text-gray-300'>
             <div className='mr-2 h-6 w-6 flex-shrink-0'>
