@@ -21,7 +21,7 @@ import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
 type FormData = Schema
 
 export default function Register() {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
   const navigate = useNavigate()
   const {
     register,
@@ -42,8 +42,9 @@ export default function Register() {
     (data) => {
       const body = omit(data, ['confirm_password'])
       registerAccountMutation.mutate(body, {
-        onSuccess: () => {
+        onSuccess: (data) => {
           setIsAuthenticated(true)
+          setProfile(data.data.data.user)
           navigate('/')
         },
         onError: (error) => {

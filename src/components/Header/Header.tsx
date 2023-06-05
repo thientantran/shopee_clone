@@ -5,11 +5,12 @@ import { logout } from 'src/apis/auth.api'
 import { AppContext } from 'src/contexts/api.context'
 import Popover from '../Popover/Popover'
 export default function Header() {
-  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+  const { isAuthenticated, setIsAuthenticated, setProfile, profile } = useContext(AppContext)
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
       setIsAuthenticated(false)
+      setProfile(null)
     }
   })
 
@@ -95,7 +96,7 @@ export default function Header() {
                   className='h-full w-full rounded-full object-cover'
                 />
               </div>
-              <div>thientantm</div>
+              <div>{profile?.email}</div>
             </Popover>
           )}
           {!isAuthenticated && (
