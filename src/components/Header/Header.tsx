@@ -1,6 +1,21 @@
+import { useMutation } from '@tanstack/react-query'
+import { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { logout } from 'src/apis/auth.api'
+import { AppContext } from 'src/contexts/api.context'
 import Popover from '../Popover/Popover'
 export default function Header() {
+  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      setIsAuthenticated(false)
+    }
+  })
+
+  const handleLogout = () => {
+    logoutMutation.mutate()
+  }
   return (
     <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2 text-white'>
       <div className='container'>
@@ -47,37 +62,53 @@ export default function Header() {
               />
             </svg>
           </Popover>
-          <Popover
-            renderPopover={
-              <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
-                <Link
-                  to='/profile'
-                  className='hover:bg-stale-100 block w-full bg-white px-4 py-3 text-left hover:text-cyan-500'
-                >
-                  Tai khoan cua toi
-                </Link>
-                <Link
-                  to='/'
-                  className='hover:bg-stale-100 block w-full bg-white px-4 py-3 text-left hover:text-cyan-500'
-                >
-                  Don mua
-                </Link>
-                <button className='hover:bg-stale-100 block w-full bg-white px-4 py-3 text-left hover:text-cyan-500'>
-                  Dang xuat
-                </button>
+          {isAuthenticated && (
+            <Popover
+              renderPopover={
+                <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
+                  <Link
+                    to='/profile'
+                    className='hover:bg-stale-100 block w-full bg-white px-4 py-3 text-left hover:text-cyan-500'
+                  >
+                    Tai khoan cua toi
+                  </Link>
+                  <Link
+                    to='/'
+                    className='hover:bg-stale-100 block w-full bg-white px-4 py-3 text-left hover:text-cyan-500'
+                  >
+                    Don mua
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className='hover:bg-stale-100 block w-full bg-white px-4 py-3 text-left hover:text-cyan-500'
+                  >
+                    Dang xuat
+                  </button>
+                </div>
+              }
+              className='ml-6 flex cursor-pointer items-center py-1 hover:text-gray-300'
+            >
+              <div className='mr-2 h-6 w-6 flex-shrink-0'>
+                <img
+                  src='https://down-vn.img.susercontent.com/file/br-11134226-7qukw-levcx0zgr2n3d2_tn'
+                  alt='avatar'
+                  className='h-full w-full rounded-full object-cover'
+                />
               </div>
-            }
-            className='ml-6 flex cursor-pointer items-center py-1 hover:text-gray-300'
-          >
-            <div className='mr-2 h-6 w-6 flex-shrink-0'>
-              <img
-                src='https://down-vn.img.susercontent.com/file/br-11134226-7qukw-levcx0zgr2n3d2_tn'
-                alt='avatar'
-                className='h-full w-full rounded-full object-cover'
-              />
+              <div>thientantm</div>
+            </Popover>
+          )}
+          {!isAuthenticated && (
+            <div className='flex items-center'>
+              <Link to='/register' className='mx-3 capitalize hover:text-white/70'>
+                Dang ky
+              </Link>
+              <div className='h-4 border-r-[1px] border-r-white/40'></div>
+              <Link to='/login' className='mx-3 capitalize hover:text-white/70'>
+                Dang nhap
+              </Link>
             </div>
-            <div>thientantm</div>
-          </Popover>
+          )}
         </div>
         <div className='mt-4 grid grid-cols-12 items-end gap-4'>
           <Link to='/' className='col-span-2'>
