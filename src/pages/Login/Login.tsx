@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from 'src/apis/auth.api'
+import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input/Input'
 import { AppContext } from 'src/contexts/api.context'
 import { ErrorResponse } from 'src/types/utils.type'
@@ -106,9 +107,14 @@ export default function Login() {
                 autoComplete='on'
               />
               <div className='mt-3'>
-                <button className='w-full bg-red-500 px-2 py-4 text-center text-sm uppercase text-white hover:bg-red-600'>
+                <Button
+                  type='submit'
+                  isLoading={loginMutation.isLoading}
+                  disabled={loginMutation.isLoading}
+                  className='flex w-full items-center justify-center bg-red-500 px-2 py-4 text-center text-sm uppercase text-white hover:bg-red-600'
+                >
                   Dang nhap
-                </button>
+                </Button>
               </div>
               <div className='mt-8 flex justify-center'>
                 <span className='text-gray-400'>Ban chua co tai khoan? </span>
