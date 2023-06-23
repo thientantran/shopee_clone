@@ -1,19 +1,67 @@
-export default function SortProductList() {
+import classNames from 'classnames'
+import { createSearchParams, useNavigate } from 'react-router-dom'
+import { sortBy } from 'src/constants/product'
+import { ProductListConfig } from 'src/types/product.type'
+import { QueryConfig } from '../ProductList'
+
+interface Props {
+  queryConfig: QueryConfig
+  pageSize: number
+}
+
+export default function SortProductList({ queryConfig, pageSize }: Props) {
+  const { sort_by = sortBy.createdAt } = queryConfig
+  const navigate = useNavigate()
+  const isActiveSortBy = (sortByValue: Exclude<ProductListConfig['sort_by'], undefined>) => {
+    return sort_by === sortByValue
+  }
+
+  const handleSort = (sortByValue: Exclude<ProductListConfig['sort_by'], undefined>) => {
+    navigate({
+      pathname: '/',
+      search: createSearchParams({
+        ...queryConfig,
+        sort_by: sortByValue
+      }).toString()
+    })
+  }
+
   return (
     <div className='bg-gray-300/40 px-3 py-4'>
       <div className='flex flex-wrap items-center justify-between gap-2'>
         <div className='flex flex-wrap items-center gap-2'>
           <div>Sap xep theo</div>
-          <button className='h-8 bg-orange px-4 text-center text-sm capitalize text-white hover:bg-orange/80'>
+          <button
+            className={classNames('h-8 bg-orange px-4 text-center text-sm capitalize', {
+              'bg:orange text-white hover:bg-orange/80': isActiveSortBy(sortBy.view),
+              'bg-white text-black': !isActiveSortBy(sortBy.view)
+            })}
+            onClick={() => handleSort(sortBy.view)}
+          >
             Pho bien
           </button>
-          <button className='h-8 bg-white px-4 text-center text-sm capitalize text-black hover:bg-slate-100'>
+          <button
+            className={classNames('h-8 bg-orange px-4 text-center text-sm capitalize', {
+              'bg:orange text-white hover:bg-orange/80': isActiveSortBy(sortBy.createdAt),
+              'bg-white text-black': !isActiveSortBy(sortBy.createdAt)
+            })}
+            onClick={() => handleSort(sortBy.createdAt)}
+          >
             Moi nhat
           </button>
-          <button className='h-8 bg-white px-4 text-center text-sm capitalize text-black hover:bg-slate-100'>
+          <button
+            className={classNames('h-8 bg-orange px-4 text-center text-sm capitalize', {
+              'bg:orange text-white hover:bg-orange/80': isActiveSortBy(sortBy.sold),
+              'bg-white text-black': !isActiveSortBy(sortBy.sold)
+            })}
+            onClick={() => handleSort(sortBy.sold)}
+          >
             Ban chay
           </button>
-          <select className='h-8 bg-white px-4 text-left text-sm capitalize text-black outline-none hover:bg-slate-100'>
+          <select
+            className='h-8 bg-white px-4 text-left text-sm capitalize text-black outline-none hover:bg-slate-100'
+            defaultValue=''
+          >
             <option value='' disabled>
               Gia
             </option>
