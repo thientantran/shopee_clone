@@ -1,6 +1,7 @@
 import classNames from 'classnames'
+import { omit } from 'lodash'
 import { createSearchParams, useNavigate } from 'react-router-dom'
-import { sortBy } from 'src/constants/product'
+import { order as orderConstant, sortBy } from 'src/constants/product'
 import { ProductListConfig } from 'src/types/product.type'
 import { QueryConfig } from '../ProductList'
 
@@ -10,7 +11,7 @@ interface Props {
 }
 
 export default function SortProductList({ queryConfig, pageSize }: Props) {
-  const { sort_by = sortBy.createdAt } = queryConfig
+  const { sort_by = sortBy.createdAt, order } = queryConfig
   const navigate = useNavigate()
   const isActiveSortBy = (sortByValue: Exclude<ProductListConfig['sort_by'], undefined>) => {
     return sort_by === sortByValue
@@ -19,9 +20,25 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
   const handleSort = (sortByValue: Exclude<ProductListConfig['sort_by'], undefined>) => {
     navigate({
       pathname: '/',
+      search: createSearchParams(
+        omit(
+          {
+            ...queryConfig,
+            sort_by: sortByValue
+          },
+          ['order']
+        )
+      ).toString()
+    })
+  }
+
+  const handlePriceOrder = (orderValue: Exclude<ProductListConfig['order'], undefined>) => {
+    navigate({
+      pathname: '/',
       search: createSearchParams({
         ...queryConfig,
-        sort_by: sortByValue
+        sort_by: sortBy.price,
+        order: orderValue
       }).toString()
     })
   }
@@ -59,14 +76,24 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
             Ban chay
           </button>
           <select
-            className='h-8 bg-white px-4 text-left text-sm capitalize text-black outline-none hover:bg-slate-100'
-            defaultValue=''
+            className={classNames('h-8 px-4 text-left text-sm capitalize outline-none', {
+              'bg-orange text-white hover:bg-orange/80': isActiveSortBy(sortBy.price),
+              'bg-white text-black hover:bg-slate-100': !isActiveSortBy(sortBy.price)
+            })}
+            value={order || ''}
+            onChange={(event) => {
+              handlePriceOrder(event.target.value as Exclude<ProductListConfig['order'], undefined>)
+            }}
           >
-            <option value='' disabled>
+            <option value='' disabled className='bg-white text-black'>
               Gia
             </option>
-            <option value='price:asc'>Gia: Thap den cao</option>
-            <option value='price:desc'>Gia: Cao den thap</option>
+            <option className='bg-white text-black' value={orderConstant.asc}>
+              Gia: Thap den cao
+            </option>
+            <option className='bg-white text-black' value={orderConstant.desc}>
+              Gia: Cao den thap
+            </option>
           </select>
         </div>
         <div className='flex items-center'>
