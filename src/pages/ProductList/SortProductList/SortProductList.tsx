@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { omit } from 'lodash'
-import { createSearchParams, useNavigate } from 'react-router-dom'
+import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import { order as orderConstant, sortBy } from 'src/constants/product'
 import { ProductListConfig } from 'src/types/product.type'
 import { QueryConfig } from '../ProductList'
@@ -11,6 +11,7 @@ interface Props {
 }
 
 export default function SortProductList({ queryConfig, pageSize }: Props) {
+  const page = Number(queryConfig.page)
   const { sort_by = sortBy.createdAt, order } = queryConfig
   const navigate = useNavigate()
   const isActiveSortBy = (sortByValue: Exclude<ProductListConfig['sort_by'], undefined>) => {
@@ -98,42 +99,98 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
         </div>
         <div className='flex items-center'>
           <div>
-            <span className='text-orange'>1</span>
-            <span>/2</span>
+            <span className='text-orange'>{page}</span>
+            <span>/{pageSize}</span>
           </div>
-          <div className='ml-2'>
-            <button className='h-8 cursor-not-allowed rounded-bl-sm rounded-tl-sm bg-white/60 px-3 hover:bg-slate-100'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth='1.5'
-                stroke='currentColor'
-                className='h-3 w-3'
+          <div className='ml-2 flex'>
+            {page === 1 ? (
+              <span className='flex h-8 w-9 cursor-not-allowed items-center justify-center rounded-bl-sm rounded-tl-sm bg-white/60 px-3 hover:bg-slate-100'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth='1.5'
+                  stroke='currentColor'
+                  className='h-3 w-3'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5'
+                  />
+                </svg>
+              </span>
+            ) : (
+              <Link
+                to={{
+                  pathname: '/',
+                  search: createSearchParams({
+                    ...queryConfig,
+                    page: (page - 1).toString()
+                  }).toString()
+                }}
+                className='flex h-8 w-9 items-center justify-center rounded-bl-sm rounded-tl-sm bg-white px-3 hover:bg-slate-100'
               >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5'
-                />
-              </svg>
-            </button>
-            <button className='h-8 rounded-bl-sm rounded-tl-sm bg-white px-3 hover:bg-slate-100'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='h-3 w-3'
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth='1.5'
+                  stroke='currentColor'
+                  className='h-3 w-3'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5'
+                  />
+                </svg>
+              </Link>
+            )}
+            {page === pageSize ? (
+              <span className='flex h-8 w-9 cursor-not-allowed items-center justify-center rounded-bl-sm rounded-tl-sm bg-white/60 px-3 hover:bg-slate-100'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth={1.5}
+                  stroke='currentColor'
+                  className='h-3 w-3'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5'
+                  />
+                </svg>
+              </span>
+            ) : (
+              <Link
+                to={{
+                  pathname: '/',
+                  search: createSearchParams({
+                    ...queryConfig,
+                    page: (page + 1).toString()
+                  }).toString()
+                }}
+                className='flex h-8 w-9 items-center justify-center rounded-bl-sm rounded-tl-sm bg-white px-3 hover:bg-slate-100'
               >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5'
-                />
-              </svg>
-            </button>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth={1.5}
+                  stroke='currentColor'
+                  className='h-3 w-3'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5'
+                  />
+                </svg>
+              </Link>
+            )}
           </div>
         </div>
       </div>
