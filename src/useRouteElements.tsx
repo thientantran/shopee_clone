@@ -4,6 +4,7 @@ import { AppContext } from './contexts/api.context'
 import MainLayout from './lauputs/MainLayout/MainLayout'
 import RegisterLayout from './lauputs/RegisterLayout/RegisterLayout'
 import Login from './pages/Login/Login'
+import ProductDetail from './pages/ProductDetail/ProductDetail'
 import ProductList from './pages/ProductList/ProductList'
 import Profile from './pages/Profile/Profile'
 import Register from './pages/Register/Register'
@@ -68,6 +69,15 @@ export default function useRouteElements() {
           )
         }
       ]
+    },
+    {
+      path: ':id',
+      index: true,
+      element: (
+        <MainLayout>
+          <ProductDetail />
+        </MainLayout>
+      )
     },
     {
       path: '/',
