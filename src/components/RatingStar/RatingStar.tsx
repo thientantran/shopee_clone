@@ -1,13 +1,34 @@
-import { Link } from 'react-router-dom'
+import { createSearchParams, useNavigate } from 'react-router-dom'
+import { QueryConfig } from 'src/pages/ProductList/ProductList'
+interface Props {
+  queryConfig: QueryConfig
+}
+export default function RatingStar({ queryConfig }: Props) {
+  const navigate = useNavigate()
 
-export default function RatingStar() {
+  const handleFilterStar = (ratingFilter: number) => {
+    navigate({
+      pathname: '/',
+      search: createSearchParams({
+        ...queryConfig,
+        rating_filter: String(ratingFilter)
+      }).toString()
+    })
+  }
   return (
     <ul className='my-3'>
       {Array(5)
         .fill(0)
         .map((_, index) => (
           <li key={index} className='py-1 pl-2'>
-            <Link to='/' className='flex items-center text-sm'>
+            <div
+              className='flex cursor-pointer items-center text-sm'
+              onClick={() => handleFilterStar(5 - index)}
+              tabIndex={0}
+              // co the su dung tab tren ban phim de chon
+              role='button'
+              aria-hidden='true'
+            >
               {Array(5)
                 .fill(0)
                 .map((_, indexStar) => {
@@ -60,7 +81,7 @@ export default function RatingStar() {
                   }
                 })}
               {index !== 0 ? <span>Tro len</span> : <span></span>}
-            </Link>
+            </div>
           </li>
         ))}
     </ul>
