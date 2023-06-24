@@ -1,20 +1,18 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import classNames from 'classnames'
 import { Controller, useForm } from 'react-hook-form'
-import { Link, createSearchParams } from 'react-router-dom'
+import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import Button from 'src/components/Button/Button'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import { Category } from 'src/types/category.type'
-import { schema } from 'src/utils/rules'
+import { NoUndefinedField } from 'src/types/utils.type'
+import { Schema, schema } from 'src/utils/rules'
 import { QueryConfig } from '../ProductList'
 interface Props {
   queryConfig: QueryConfig
   categories: Category[]
 }
-type FormData = {
-  price_min: string
-  price_max: string
-}
+type FormData = NoUndefinedField<Pick<Schema, 'price_max' | 'price_min'>>
 
 const priceSchema = schema.pick(['price_min', 'price_max'])
 export default function AsideFilter({ queryConfig, categories }: Props) {
@@ -33,11 +31,20 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
     resolver: yupResolver(priceSchema),
     shouldFocusError: false
   })
+  const navigate = useNavigate()
   const valueForm = watch()
   console.log('error', errors)
   const onSubmit = handleSubmit(
     (data) => {
-      console.log('data', data)
+      // console.log('data', data)
+      navigate({
+        pathname: '/',
+        search: createSearchParams({
+          ...queryConfig,
+          price_max: data.price_max,
+          price_min: data.price_min
+        }).toString()
+      })
     }
     // (err) => {
     //   err.price_max?.ref?.focus()

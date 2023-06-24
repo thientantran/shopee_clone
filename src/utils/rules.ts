@@ -57,6 +57,14 @@ export const getRules = (getValues?: UseFormGetValues<any>): Rules => ({
   }
 })
 
+function testPriceMinMax(this: yup.TestContext<yup.AnyObject>) {
+  const { price_min, price_max } = this.parent as { price_min: string; price_max: string }
+  if (price_min !== '' && price_max !== '') {
+    return Number(price_max) >= Number(price_min)
+  }
+  return price_min !== '' || price_max !== ''
+}
+
 export const schema = yup.object({
   email: yup
     .string()
@@ -76,28 +84,14 @@ export const schema = yup.object({
     .max(160, 'Do dai tu 6-160 ky tu')
     .oneOf([yup.ref('password')], 'Nhap lai password khong khop'),
   price_min: yup.string().test({
-    name: 'price-not-allowerd',
+    name: 'price-not-allowed',
     message: 'Gia khong phu hop',
-    test: function (value) {
-      const price_min = value
-      const { price_max } = this.parent as { price_min: string; price_max: string }
-      if (price_min !== '' && price_max !== '') {
-        return Number(price_max) >= Number(price_min)
-      }
-      return price_min !== '' || price_max !== ''
-    }
+    test: testPriceMinMax
   }),
   price_max: yup.string().test({
-    name: 'price-not-allowerd',
+    name: 'price-not-allowed',
     message: 'Gia khong phu hop',
-    test: function (value) {
-      const price_max = value
-      const { price_min } = this.parent as { price_min: string; price_max: string }
-      if (price_min !== '' && price_max !== '') {
-        return Number(price_max) >= Number(price_min)
-      }
-      return price_min !== '' || price_max !== ''
-    }
+    test: testPriceMinMax
   })
 })
 
