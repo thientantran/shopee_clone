@@ -74,7 +74,31 @@ export const schema = yup.object({
     .required('Nhap lai password la bat buoc')
     .min(6, 'Do dai tu 6-160 ky tu')
     .max(160, 'Do dai tu 6-160 ky tu')
-    .oneOf([yup.ref('password')], 'Nhap lai password khong khop')
+    .oneOf([yup.ref('password')], 'Nhap lai password khong khop'),
+  price_min: yup.string().test({
+    name: 'price-not-allowerd',
+    message: 'Gia khong phu hop',
+    test: function (value) {
+      const price_min = value
+      const { price_max } = this.parent as { price_min: string; price_max: string }
+      if (price_min !== '' && price_max !== '') {
+        return Number(price_max) >= Number(price_min)
+      }
+      return price_min !== '' || price_max !== ''
+    }
+  }),
+  price_max: yup.string().test({
+    name: 'price-not-allowerd',
+    message: 'Gia khong phu hop',
+    test: function (value) {
+      const price_max = value
+      const { price_min } = this.parent as { price_min: string; price_max: string }
+      if (price_min !== '' && price_max !== '') {
+        return Number(price_max) >= Number(price_min)
+      }
+      return price_min !== '' || price_max !== ''
+    }
+  })
 })
 
 export const loginSchema = schema.omit(['confirm_password'])

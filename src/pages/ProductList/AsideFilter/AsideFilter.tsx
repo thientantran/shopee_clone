@@ -1,11 +1,12 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import classNames from 'classnames'
 import { Controller, useForm } from 'react-hook-form'
 import { Link, createSearchParams } from 'react-router-dom'
 import Button from 'src/components/Button/Button'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import { Category } from 'src/types/category.type'
+import { schema } from 'src/utils/rules'
 import { QueryConfig } from '../ProductList'
-
 interface Props {
   queryConfig: QueryConfig
   categories: Category[]
@@ -15,16 +16,33 @@ type FormData = {
   price_max: string
 }
 
+const priceSchema = schema.pick(['price_min', 'price_max'])
 export default function AsideFilter({ queryConfig, categories }: Props) {
   const { category } = queryConfig
-  const { control, handleSubmit, watch } = useForm<FormData>({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    trigger,
+    formState: { errors }
+  } = useForm<FormData>({
     defaultValues: {
       price_min: '',
       price_max: ''
-    }
+    },
+    resolver: yupResolver(priceSchema),
+    shouldFocusError: false
   })
   const valueForm = watch()
-  console.log(valueForm)
+  console.log('error', errors)
+  const onSubmit = handleSubmit(
+    (data) => {
+      console.log('data', data)
+    }
+    // (err) => {
+    //   err.price_max?.ref?.focus()
+    // }
+  )
   return (
     <div className='py-4'>
       <Link
@@ -103,7 +121,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
       <div className='my-4 h-[1px] bg-gray-300' />
       <div className='my-5'>
         <div>Khoan gia</div>
-        <form className='mt-2'>
+        <form className='mt-2' onSubmit={onSubmit}>
           <div className='flex items-start'>
             <Controller
               control={control}
@@ -115,8 +133,13 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                     className='grow'
                     placeholder='TU'
                     classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                    onChange={field.onChange}
+                    classNameError='hidden'
+                    onChange={(event) => {
+                      field.onChange(event)
+                      trigger('price_max')
+                    }}
                     value={field.value}
+                    ref={field.ref}
                   />
                 )
               }}
@@ -133,13 +156,19 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                     className='grow'
                     placeholder='DEN'
                     classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                    onChange={field.onChange}
+                    classNameError='hidden'
+                    onChange={(event) => {
+                      field.onChange(event)
+                      trigger('price_min')
+                    }}
                     value={field.value}
+                    ref={field.ref}
                   />
                 )
               }}
             />
           </div>
+          <div className='mt-1 min-h-[1.25rem] text-center text-sm text-red-600'>{errors.price_min?.message}</div>
           <Button className='flex w-full items-center justify-center bg-orange p-2 text-sm uppercase text-white hover:bg-orange/80'>
             Ap dung
           </Button>
