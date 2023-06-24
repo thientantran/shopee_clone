@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import classNames from 'classnames'
+import { omit } from 'lodash'
 import { Controller, useForm } from 'react-hook-form'
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import Button from 'src/components/Button/Button'
@@ -51,6 +52,13 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
     //   err.price_max?.ref?.focus()
     // }
   )
+
+  const handleRemoveAll = () => {
+    navigate({
+      pathname: '/',
+      search: createSearchParams(omit(queryConfig, ['price_min', 'price_max', 'rating_filter', 'category'])).toString()
+    })
+  }
   return (
     <div className='py-4'>
       <Link
@@ -186,7 +194,10 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
       <div className='text-sm'>Danh gia</div>
       <RatingStar queryConfig={queryConfig} />
       <div className='my-4 h-[1px] bg-gray-300' />
-      <Button className='flex w-full items-center justify-center bg-orange p-2 text-sm uppercase text-white hover:bg-orange/80'>
+      <Button
+        onClick={handleRemoveAll}
+        className='flex w-full items-center justify-center bg-orange p-2 text-sm uppercase text-white hover:bg-orange/80'
+      >
         Xoa tat ca
       </Button>
     </div>
