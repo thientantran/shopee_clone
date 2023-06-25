@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import productApi from 'src/apis/product.api'
 import InputNumber from 'src/components/InputNumber/InputNumber'
@@ -15,8 +15,18 @@ export default function ProductDetail() {
   })
   const product = productDetailData?.data.data
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5])
+  const [activeImage, setActiveImage] = useState('')
   const currentImages = useMemo(() => (product ? product.images.slice(...currentIndexImages) : []), [product])
-  console.log(currentImages)
+
+  useEffect(() => {
+    if (product && product.images.length > 0) {
+      setActiveImage(product.images[0])
+    }
+  }, [product])
+
+  const chooseActive = (img: string) => {
+    setActiveImage(img)
+  }
   if (!product) return null
   return (
     <div className='bg-gray-200 py-6'>
@@ -26,7 +36,7 @@ export default function ProductDetail() {
             <div className='col-span-5'>
               <div className='relative w-full pt-[100%] shadow'>
                 <img
-                  src={product.image}
+                  src={activeImage}
                   alt={product.image}
                   className='absolute left-0 top-0 h-full w-full bg-white object-cover'
                 />
@@ -45,9 +55,9 @@ export default function ProductDetail() {
                   </svg>
                 </button>
                 {currentImages.map((img, index) => {
-                  const isActive = index === 0
+                  const isActive = img === activeImage
                   return (
-                    <div className='relative w-full' key={img}>
+                    <div className='relative w-full cursor-pointer' key={img} onMouseEnter={() => chooseActive(img)}>
                       <img
                         src={img}
                         alt={img}
