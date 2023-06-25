@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import productApi from 'src/apis/product.api'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import ProductRating from 'src/components/ProductRating/ProductRating'
+import { Product } from 'src/types/product.type'
 import { formatCurrency, formatNumberToSocialStyle, rateSale } from 'src/utils/utils'
 DOMPurify
 export default function ProductDetail() {
@@ -16,13 +17,27 @@ export default function ProductDetail() {
   const product = productDetailData?.data.data
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5])
   const [activeImage, setActiveImage] = useState('')
-  const currentImages = useMemo(() => (product ? product.images.slice(...currentIndexImages) : []), [product])
+  const currentImages = useMemo(
+    () => (product ? product.images.slice(...currentIndexImages) : []),
+    [product, currentIndexImages]
+  )
 
   useEffect(() => {
     if (product && product.images.length > 0) {
       setActiveImage(product.images[0])
     }
   }, [product])
+
+  const next = () => {
+    if (currentIndexImages[1] < (product as Product).images.length) {
+      setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1])
+    }
+  }
+  const prev = () => {
+    if (currentIndexImages[0] > 0) {
+      setCurrentIndexImages((prev) => [prev[0] - 1, prev[1] - 1])
+    }
+  }
 
   const chooseActive = (img: string) => {
     setActiveImage(img)
@@ -42,7 +57,10 @@ export default function ProductDetail() {
                 />
               </div>
               <div className='relative mt-4 grid grid-cols-5 gap-1'>
-                <button className='absolute left-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'>
+                <button
+                  onClick={prev}
+                  className='absolute left-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'
+                >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -54,7 +72,7 @@ export default function ProductDetail() {
                     <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
                   </svg>
                 </button>
-                {currentImages.map((img, index) => {
+                {currentImages.map((img) => {
                   const isActive = img === activeImage
                   return (
                     <div className='relative w-full cursor-pointer' key={img} onMouseEnter={() => chooseActive(img)}>
@@ -67,7 +85,10 @@ export default function ProductDetail() {
                     </div>
                   )
                 })}
-                <button className='absolute right-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'>
+                <button
+                  onClick={next}
+                  className='absolute right-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'
+                >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
