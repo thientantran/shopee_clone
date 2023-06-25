@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
+import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import productApi from 'src/apis/product.api'
 import InputNumber from 'src/components/InputNumber/InputNumber'
@@ -13,11 +14,14 @@ export default function ProductDetail() {
     queryFn: () => productApi.getProductDetail(id as string)
   })
   const product = productDetailData?.data.data
+  const [currentIndexImages, setCurrentIndexImages] = useState([0, 5])
+  const currentImages = useMemo(() => (product ? product.images.slice(...currentIndexImages) : []), [product])
+  console.log(currentImages)
   if (!product) return null
   return (
     <div className='bg-gray-200 py-6'>
-      <div className='bg-white p-4 shadow'>
-        <div className='container'>
+      <div className='container'>
+        <div className='bg-white p-4 shadow'>
           <div className='grid grid-cols-12 gap-9'>
             <div className='col-span-5'>
               <div className='relative w-full pt-[100%] shadow'>
@@ -40,12 +44,12 @@ export default function ProductDetail() {
                     <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
                   </svg>
                 </button>
-                {product.images.slice(0, 5).map((img, index) => {
+                {currentImages.map((img, index) => {
                   const isActive = index === 0
                   return (
                     <div className='relative w-full' key={img}>
                       <img
-                        src={product.image}
+                        src={img}
                         alt={img}
                         className='abosulute left-0 top-0 h-full w-full cursor-pointer bg-white object-cover'
                       />
@@ -178,8 +182,8 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
-      <div className='mt-8 bg-white p-4 shadow'>
-        <div className='container'>
+      <div className='container'>
+        <div className='mt-8 bg-white p-4 shadow'>
           <div className='rounded bg-gray-50 p-4 text-lg capitalize text-slate-700'>Mô tả sản phẩm</div>
           <div className='mx-4 mb-4 mt-12 text-sm leading-loose'>
             <div
