@@ -6,10 +6,11 @@ import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import Button from 'src/components/Button/Button'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import RatingStar from 'src/components/RatingStar/RatingStar'
+import { QueryConfig } from 'src/hooks/useQueryConfig'
 import { Category } from 'src/types/category.type'
 import { NoUndefinedField } from 'src/types/utils.type'
 import { Schema, schema } from 'src/utils/rules'
-import { QueryConfig } from '../ProductList'
+
 interface Props {
   queryConfig: QueryConfig
   categories: Category[]

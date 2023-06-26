@@ -1,10 +1,26 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
+import { omit } from 'lodash'
 import { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import authApi from 'src/apis/auth.api'
 import { AppContext } from 'src/contexts/api.context'
+import useQueryConfig from 'src/hooks/useQueryConfig'
+import { Schema, schema } from 'src/utils/rules'
 import Popover from '../Popover/Popover'
+
+type FormData = Pick<Schema, 'name'>
+const nameSchema = schema.pick(['name'])
 export default function Header() {
+  const queryConfig = useQueryConfig()
+  const { register, handleSubmit } = useForm<FormData>({
+    defaultValues: {
+      name: ''
+    },
+    resolver: yupResolver(nameSchema)
+  })
+  const navigate = useNavigate()
   const { isAuthenticated, setIsAuthenticated, setProfile, profile } = useContext(AppContext)
   const logoutMutation = useMutation({
     mutationFn: authApi.logout,
@@ -17,6 +33,26 @@ export default function Header() {
   const handleLogout = () => {
     logoutMutation.mutate()
   }
+
+  const onSubmitSearch = handleSubmit((data) => {
+    const config = queryConfig.order
+      ? omit(
+          {
+            ...queryConfig,
+            name: data.name
+          },
+          ['order', 'sort_by']
+        )
+      : {
+          ...queryConfig,
+          name: data.name
+        }
+    navigate({
+      pathname: '/',
+
+      search: createSearchParams(config).toString()
+    })
+  })
   return (
     <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2 text-white'>
       <div className='container'>
@@ -119,11 +155,12 @@ export default function Header() {
               </g>
             </svg>
           </Link>
-          <form className='col-span-9'>
+          <form className='col-span-9' onSubmit={onSubmitSearch}>
             <div className='flex rounded-sm bg-white p-1'>
               <input
+                {...register('name')}
+                placeholder='Free ship'
                 type='text'
-                name='search'
                 className='outline-non flex-grow border-none bg-transparent px-3 py-2 text-black'
               />
               <button className='flex-shrink-0 rounded-sm bg-orange px-6 py-2 hover:opacity-90'>

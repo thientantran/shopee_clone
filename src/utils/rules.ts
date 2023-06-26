@@ -92,7 +92,8 @@ export const schema = yup.object({
     name: 'price-not-allowed',
     message: 'Gia khong phu hop',
     test: testPriceMinMax
-  })
+  }),
+  name: yup.string().trim().required('Tên sản phẩm là bắt buộc!')
 })
 
 export const loginSchema = schema.omit(['confirm_password'])
