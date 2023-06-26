@@ -15,6 +15,7 @@ import Popover from '../Popover/Popover'
 
 type FormData = Pick<Schema, 'name'>
 const nameSchema = schema.pick(['name'])
+const MAX_PURCHASES = 5
 export default function Header() {
   const queryConfig = useQueryConfig()
   const { register, handleSubmit } = useForm<FormData>({
@@ -202,8 +203,11 @@ export default function Header() {
                     <div className='p-2'>
                       <div className='capitalize text-gray-400'>San pham moi them</div>
                       <div className='mt-5'>
-                        {purchasesInCart.map((purchase) => (
-                          <div key={purchase._id} className='mt-4 flex items-center'>
+                        {purchasesInCart.slice(0, MAX_PURCHASES).map((purchase) => (
+                          <div
+                            key={purchase._id}
+                            className='mt-2 flex cursor-pointer items-center py-2 hover:bg-gray-100'
+                          >
                             <div className='flex-shrink-0'>
                               <img
                                 src={purchase.product.image}
@@ -221,7 +225,10 @@ export default function Header() {
                         ))}
                       </div>
                       <div className='mt-6 flex items-center justify-between'>
-                        <div className='capitailize text-xs text-gray-500'>Them vao gio hang</div>
+                        <div className='capitailize text-xs text-gray-500'>
+                          {purchasesInCart.length > MAX_PURCHASES ? purchasesInCart.length - MAX_PURCHASES : ''} Them
+                          vao gio hang
+                        </div>
                         <button className='rounded-sm bg-orange px-4 py-2 capitalize text-white hover:bg-opacity-80'>
                           Xem gio hang
                         </button>
