@@ -72,7 +72,6 @@ export default function useRouteElements() {
     },
     {
       path: ':nameId',
-      index: true,
       element: (
         <MainLayout>
           <ProductDetail />
