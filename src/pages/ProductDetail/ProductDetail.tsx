@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import productApi from 'src/apis/product.api'
 import InputNumber from 'src/components/InputNumber/InputNumber'
@@ -17,6 +17,7 @@ export default function ProductDetail() {
   const product = productDetailData?.data.data
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5])
   const [activeImage, setActiveImage] = useState('')
+  const imageRef = useRef<HTMLImageElement>(null)
   const currentImages = useMemo(
     () => (product ? product.images.slice(...currentIndexImages) : []),
     [product, currentIndexImages]
@@ -42,6 +43,30 @@ export default function ProductDetail() {
   const chooseActive = (img: string) => {
     setActiveImage(img)
   }
+
+  const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    // lấy chiều cao và chiều rộng của thẻ div chứa
+    const image = imageRef.current as HTMLImageElement
+    const { naturalHeight, naturalWidth } = image
+    const { offsetX, offsetY } = event.nativeEvent
+    // offsetX, offsetY là vị trí con trỏ theo toạ độ X, Y ở trong cái thẻ mà mình gắn function
+    // dùng cách lấy offset như trên thì phải giải quyết bubble event, còn nếu ko có thể dùng cách sau đây
+    // khi đó có thể xoá cái pointer-events-none
+    // const offsetX = event.pageX - (rect.x + window.scrollX)
+    // const offsetY = event.pageY - (rect.y + window.scrollY)
+    const top = offsetX * (1 - naturalHeight / rect.height)
+    const left = offsetY * (1 - naturalWidth / rect.width)
+    image.style.width = naturalWidth + 'px'
+    image.style.height = naturalHeight + 'px'
+    image.style.maxWidth = 'unset'
+    image.style.top = top + 'px'
+    image.style.left = left + 'px'
+    // event bubble là khi hover vào thẻ con, cũng có nghĩ là đang hover vào thẻ cha, có thể gây sai sót
+  }
+  const handleRemoveZoom = () => {
+    imageRef.current?.removeAttribute('style')
+  }
   if (!product) return null
   return (
     <div className='bg-gray-200 py-6'>
@@ -49,11 +74,17 @@ export default function ProductDetail() {
         <div className='bg-white p-4 shadow'>
           <div className='grid grid-cols-12 gap-9'>
             <div className='col-span-5'>
-              <div className='relative w-full pt-[100%] shadow'>
+              <div
+                className='relative w-full cursor-zoom-in overflow-hidden pt-[100%] shadow'
+                onMouseLeave={handleRemoveZoom}
+                onMouseMove={handleZoom}
+              >
                 <img
                   src={activeImage}
                   alt={product.image}
-                  className='absolute left-0 top-0 h-full w-full bg-white object-cover'
+                  // set pointer -event -none để ko bị event bubble
+                  className='pointer-events-none absolute left-0 top-0 h-full w-full bg-white object-cover'
+                  ref={imageRef}
                 />
               </div>
               <div className='relative mt-4 grid grid-cols-5 gap-1'>
