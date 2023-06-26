@@ -71,7 +71,7 @@ export default function useRouteElements() {
       ]
     },
     {
-      path: ':id',
+      path: ':nameId',
       index: true,
       element: (
         <MainLayout>

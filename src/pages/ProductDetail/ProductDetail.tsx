@@ -6,10 +6,12 @@ import productApi from 'src/apis/product.api'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import ProductRating from 'src/components/ProductRating/ProductRating'
 import { Product } from 'src/types/product.type'
-import { formatCurrency, formatNumberToSocialStyle, rateSale } from 'src/utils/utils'
+import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, rateSale } from 'src/utils/utils'
 DOMPurify
 export default function ProductDetail() {
-  const { id } = useParams()
+  const { nameId } = useParams()
+  const id = getIdFromNameId(nameId as string)
+  console.log(id)
   const { data: productDetailData } = useQuery({
     queryKey: ['product', id],
     queryFn: () => productApi.getProductDetail(id as string)
