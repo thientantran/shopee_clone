@@ -6,6 +6,8 @@ import productApi from 'src/apis/product.api'
 import purchaseApi from 'src/apis/purchase.api'
 import ProductRating from 'src/components/ProductRating/ProductRating'
 import QuantityController from 'src/components/QuantityController/QuantityController'
+import { purchasesStatus } from 'src/constants/purchase'
+import { queryClient } from 'src/main'
 import { ProductListConfig, Product as ProductType } from 'src/types/product.type'
 import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, rateSale } from 'src/utils/utils'
 import Product from '../ProductList/Product/Product'
@@ -88,7 +90,14 @@ export default function ProductDetail() {
     setBuyCount(value)
   }
   const addToCart = () => {
-    addToCartMutation.mutate({ buy_count: buyCount, product_id: product?._id as string })
+    addToCartMutation.mutate(
+      { buy_count: buyCount, product_id: product?._id as string },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['purchases', { status: purchasesStatus.inCart }] })
+        }
+      }
+    )
   }
   if (!product) return null
   return (
