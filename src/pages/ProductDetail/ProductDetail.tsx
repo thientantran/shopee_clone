@@ -5,8 +5,9 @@ import { useParams } from 'react-router-dom'
 import productApi from 'src/apis/product.api'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import ProductRating from 'src/components/ProductRating/ProductRating'
-import { Product } from 'src/types/product.type'
+import { ProductListConfig, Product as ProductType } from 'src/types/product.type'
 import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, rateSale } from 'src/utils/utils'
+import Product from '../ProductList/Product/Product'
 DOMPurify
 export default function ProductDetail() {
   const { nameId } = useParams()
@@ -24,6 +25,17 @@ export default function ProductDetail() {
     [product, currentIndexImages]
   )
 
+  const queryConfig: ProductListConfig = { limit: '20', page: '1', category: product?.category._id }
+  const { data: productsData } = useQuery({
+    queryKey: ['products', queryConfig],
+    queryFn: () => {
+      return productApi.getProducts(queryConfig)
+    },
+    staleTime: 3 * 60 * 1000,
+    // phải set stale time bằng cái product list, vì nếu ko set thì là 0, thì lần 2 gọi sẽ tiếp tục gọi API, do đó để ở cái này ko cần gọi lại nên phải set lại staletime
+    enabled: Boolean(product)
+    // chỉ gọi api khi mà có product, ko có thì ko gọi api này
+  })
   useEffect(() => {
     if (product && product.images.length > 0) {
       setActiveImage(product.images[0])
@@ -31,7 +43,7 @@ export default function ProductDetail() {
   }, [product])
 
   const next = () => {
-    if (currentIndexImages[1] < (product as Product).images.length) {
+    if (currentIndexImages[1] < (product as ProductType).images.length) {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1])
     }
   }
@@ -255,6 +267,20 @@ export default function ProductDetail() {
               }}
             ></div>
           </div>
+        </div>
+      </div>
+      <div className='mt-8'>
+        <div className='container'>
+          <div className='uppercase text-gray-400'>Có thể bạn cũng thích</div>
+          {productsData && (
+            <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
+              {productsData.data.data.products.map((product) => (
+                <div className='col-span-1' key={product._id}>
+                  <Product product={product} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
