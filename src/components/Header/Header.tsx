@@ -234,9 +234,12 @@ export default function Header() {
                           {purchasesInCart.length > MAX_PURCHASES ? purchasesInCart.length - MAX_PURCHASES : ''} Them
                           vao gio hang
                         </div>
-                        <button className='rounded-sm bg-orange px-4 py-2 capitalize text-white hover:bg-opacity-80'>
+                        <Link
+                          to='/cart'
+                          className='rounded-sm bg-orange px-4 py-2 capitalize text-white hover:bg-opacity-80'
+                        >
                           Xem gio hang
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   ) : (
