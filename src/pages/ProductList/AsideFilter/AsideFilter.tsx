@@ -166,6 +166,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
               control={control}
               name='price_min'
               // Tuy nhiên gõ ko gọi ý name cho mình
+              // do đó phải dùng generic type để dựa vào control truyền vào mà gợi ý cái name này
               type='number'
               className='grow'
               placeholder='TU'

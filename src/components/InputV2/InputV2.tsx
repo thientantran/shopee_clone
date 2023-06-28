@@ -1,5 +1,5 @@
 import { InputHTMLAttributes, useState } from 'react'
-import { UseControllerProps, useController } from 'react-hook-form'
+import { FieldPath, FieldValues, UseControllerProps, useController } from 'react-hook-form'
 // type Rules = { [key in 'email' | 'password' | 'confirm_password']?: RegisterOptions }
 export interface InputNumberProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string
@@ -7,7 +7,10 @@ export interface InputNumberProps extends InputHTMLAttributes<HTMLInputElement> 
   classNameError?: string
 }
 
-function InputV2(props: UseControllerProps<any> & InputNumberProps) {
+function InputV2<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(props: UseControllerProps<TFieldValues, TName> & InputNumberProps) {
   const {
     type,
     className,
