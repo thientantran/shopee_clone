@@ -24,7 +24,7 @@ export default function Input({
   return (
     <div className={className}>
       <input className={classNameInput} {...registerInput} {...rest} />
-      <div className='mt-1 min-h-[1.25rem] text-sm text-red-600'>{errorMessage}</div>
+      <div className={classNameError}>{errorMessage}</div>
     </div>
   )
 }
