@@ -1,4 +1,5 @@
-import { InputHTMLAttributes, forwardRef, useState } from 'react'
+import { InputHTMLAttributes, useState } from 'react'
+import { UseControllerProps, useController } from 'react-hook-form'
 // type Rules = { [key in 'email' | 'password' | 'confirm_password']?: RegisterOptions }
 export interface InputNumberProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string
@@ -6,35 +7,44 @@ export interface InputNumberProps extends InputHTMLAttributes<HTMLInputElement> 
   classNameError?: string
 }
 
-const InputV2 = forwardRef<HTMLInputElement, InputNumberProps>(function InputNumberInner(
-  {
-    errorMessage,
+function InputV2(props: UseControllerProps<any> & InputNumberProps) {
+  const {
+    type,
     className,
     classNameInput = 'p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm',
     classNameError = 'mt-1 text-red-600 min-h-[1.25rem] text-sm',
     onChange,
     value = '',
     ...rest
-  },
-  ref
-) {
-  const [localValue, setLocalValue] = useState<string>(value as string)
+  } = props
+  const { field, fieldState } = useController(props)
+  const [localValue, setLocalValue] = useState<string>(field.value)
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
-    if (/^\d+$/.test(value) || value === '') {
+    const valueFormInput = event.target.value
+    const numberCondition = type === 'number' && (/^\d+$/.test(valueFormInput) || valueFormInput === '')
+    if (numberCondition || type !== 'number') {
+      // cap nhat local value state
+      setLocalValue(valueFormInput)
+      // gọi field.onChange để cập nhật vào state react hook form
+      field.onChange(event)
       // thực thi onchange callback từ bên ngoài truyền vào props
       onChange && onChange(event)
-      // cap nhat local value state
-      setLocalValue(value)
     }
   }
   return (
     <div className={className}>
-      <input className={classNameInput} onChange={handleChange} {...rest} ref={ref} value={value || localValue} />
-      <div className={classNameError}>{errorMessage}</div>
+      <input
+        className={classNameInput}
+        {...rest}
+        {...field}
+        //phải đẻ field và rest phía trước cái onChange được truyền vào, do trong field có 1 hàm onChange builtin, do đó có thể overwrite cái hàm onChange được truyền vào
+        onChange={handleChange}
+        value={value || localValue}
+      />
+      <div className={classNameError}>{fieldState.error?.message}</div>
     </div>
   )
-})
+}
 
 export default InputV2
 
