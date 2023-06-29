@@ -62,14 +62,23 @@ export default function Cart() {
       }))
     )
   }
-  const handleQuantity = (purchaseIndex: number, value: number) => {
-    const purchase = extendedPurchases[purchaseIndex]
+  const handleQuantity = (purchaseIndex: number, value: number, enable: boolean) => {
+    if (enable) {
+      const purchase = extendedPurchases[purchaseIndex]
+      setExtendedPurchases(
+        produce((draft) => {
+          draft[purchaseIndex].disabled = true
+        })
+      )
+      updatePurchaseMutation.mutate({ product_id: purchase.product._id, buy_count: value })
+    }
+  }
+  const handleTypeQuantity = (purchaseIndex: number) => (value: number) => {
     setExtendedPurchases(
       produce((draft) => {
-        draft[purchaseIndex].disabled = true
+        draft[purchaseIndex].buy_count = value
       })
     )
-    updatePurchaseMutation.mutate({ product_id: purchase.product._id, buy_count: value })
   }
   return (
     <div className='bg-neutral-100 py-16'>
@@ -142,7 +151,10 @@ export default function Cart() {
                     <div className='grid grid-cols-5 items-center'>
                       <div className='col-span-2'>
                         <div className='flex items-center justify-center'>
-                          <span className='text-gray-300 line-through'>d {formatCurrency(purchase.product.price)}</span>
+                          <span className='text-gray-300 line-through'>
+                            d {formatCurrency(purchase.product.price_before_discount)}
+                          </span>
+                          <span className='ml-2 text-orange'>d {formatCurrency(purchase.product.price)}</span>
                         </div>
                       </div>
                       <div className='col-span-1'>
@@ -150,14 +162,27 @@ export default function Cart() {
                           max={purchase.product.quantity}
                           value={purchase.buy_count}
                           classNameWrapper='flex items-center'
-                          onIncrease={(value) => handleQuantity(index, value)}
-                          onDecrease={(value) => handleQuantity(index, value)}
+                          onIncrease={(value) => handleQuantity(index, value, value <= purchase.product.quantity)}
+                          onDecrease={(value) => handleQuantity(index, value, value >= 1)}
+                          onType={handleTypeQuantity(index)}
+                          onFocusOut={
+                            (value) =>
+                              handleQuantity(
+                                index,
+                                value,
+                                value >= 1 &&
+                                  value <= purchase.product.quantity &&
+                                  value !== (purchasesInCart as Purchase[])[index].buy_count
+                                // để khi chỉ khi đổi giá trị mới gọi api, còn k thì sẽ ko gọi
+                              )
+                            // tái sử dụng cái này lại, khi focuse out ra thì nó sẽ gọi api
+                          }
                           disabled={purchase.disabled}
                         />
                       </div>
                       <div className='col-span-1 text-center'>
                         <span className='text-orange'>
-                          d{formatCurrency(purchase.product.price * purchase.product.quantity)}
+                          d {formatCurrency(purchase.product.price * purchase.buy_count)}
                         </span>
                       </div>
                       <div className='col-span-1 text-center'>
