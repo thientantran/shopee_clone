@@ -29,9 +29,22 @@ export default function Cart() {
       // khi đó thì sẽ nhảy vào useEffect ở dưới để đổi lại checked và disable = false
     }
   })
-
+  const buyPurchaseMutation = useMutation({
+    mutationFn: purchaseApi.updatePurchase,
+    onSuccess: () => {
+      refetch()
+    }
+  })
+  const deletePurchaseMutation = useMutation({
+    mutationFn: purchaseApi.deletePurchase,
+    onSuccess: () => {
+      refetch()
+    }
+  })
   const purchasesInCart = purchasesInCartData?.data.data
   const isAllChecked = extendedPurchases.every((purchase) => purchase.checked)
+  const checkedPurchases = extendedPurchases.filter((purchase) => purchase.checked)
+  const checkedPurchasesCount = checkedPurchases.length
   useEffect(() => {
     setExtendedPurchases((prev) => {
       const extendedPurchasesObject = keyBy(prev, '_id')
@@ -79,6 +92,14 @@ export default function Cart() {
         draft[purchaseIndex].buy_count = value
       })
     )
+  }
+  const handleDelete = (purchaseIndex: number) => () => {
+    const purchaseId = extendedPurchases[purchaseIndex]._id
+    deletePurchaseMutation.mutate([purchaseId])
+  }
+  const handleDeleteManyPurchases = () => {
+    const purchaseIds = checkedPurchases.map((purchase) => purchase._id)
+    deletePurchaseMutation.mutate(purchaseIds)
   }
   return (
     <div className='bg-neutral-100 py-16'>
@@ -186,7 +207,12 @@ export default function Cart() {
                         </span>
                       </div>
                       <div className='col-span-1 text-center'>
-                        <button className='bg-none text-black transition-colors hover:text-orange'>Xoa</button>
+                        <button
+                          onClick={handleDelete(index)}
+                          className='bg-none text-black transition-colors hover:text-orange'
+                        >
+                          Xoa
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -209,7 +235,9 @@ export default function Cart() {
             <button className='mx-3 border-none bg-none' onClick={handleCheckAll}>
               Chon tat ca ({extendedPurchases.length})
             </button>
-            <button className='mx-3 border-none bg-none'>Xoa</button>
+            <button onClick={handleDeleteManyPurchases} className='mx-3 border-none bg-none'>
+              Xoa
+            </button>
           </div>
 
           <div className='ml-auto mt-5 flex flex-col sm:mt-0 sm:flex-row sm:items-center'>
