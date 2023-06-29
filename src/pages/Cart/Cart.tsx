@@ -45,6 +45,12 @@ export default function Cart() {
   const isAllChecked = extendedPurchases.every((purchase) => purchase.checked)
   const checkedPurchases = extendedPurchases.filter((purchase) => purchase.checked)
   const checkedPurchasesCount = checkedPurchases.length
+  const totalCheckedPurchasePrice = checkedPurchases.reduce((result, current) => {
+    return result + current.product.price * current.buy_count
+  }, 0)
+  const totalCheckedPurchaseSavingPrice = checkedPurchases.reduce((result, current) => {
+    return result + (current.product.price_before_discount - current.product.price) * current.buy_count
+  }, 0)
   useEffect(() => {
     setExtendedPurchases((prev) => {
       const extendedPurchasesObject = keyBy(prev, '_id')
@@ -243,12 +249,12 @@ export default function Cart() {
           <div className='ml-auto mt-5 flex flex-col sm:mt-0 sm:flex-row sm:items-center'>
             <div>
               <div className='flex items-center justify-end'>
-                <div>Tong thanh toan (0 san pham): </div>
-                <div className='ml-2 text-2xl text-orange'>d138000</div>
+                <div>Tong thanh toan ({checkedPurchasesCount} san pham): </div>
+                <div className='ml-2 text-2xl text-orange'>d{formatCurrency(totalCheckedPurchasePrice)}</div>
               </div>
               <div className='flex items-center justify-end text-sm'>
                 <div className='text-gray-500'>Tiet kiem</div>
-                <div className='ml-6 text-orange'>d138000</div>
+                <div className='ml-6 text-orange'>d{formatCurrency(totalCheckedPurchaseSavingPrice)}</div>
               </div>
             </div>
             <div className='mt-2 flex justify-end sm:mt-0'>
