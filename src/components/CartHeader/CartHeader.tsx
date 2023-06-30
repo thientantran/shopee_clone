@@ -25,22 +25,21 @@ export default function CartHeader() {
               <div className='mx-4 h-8 w-[1px] bg-orange'></div>
               <div className='capitalize text-orange lg:text-xl'>Gio Hang</div>
             </Link>
-            <form className='col-span-9' onSubmit={onSubmitSearch}>
-              <div className='flex rounded-sm bg-white p-1'>
+            <form className='mt-3 md:mt-0 md:w-[50%]'>
+              <div className='flex rounded-sm border-2 border-orange'>
                 <input
-                  {...register('name')}
                   placeholder='Free ship'
                   type='text'
-                  className='outline-non flex-grow border-none bg-transparent px-3 py-2 text-black'
+                  className='w-full flex-grow border-none bg-transparent px-3 py-1 text-black outline-none'
                 />
-                <button className='flex-shrink-0 rounded-sm bg-orange px-6 py-2 hover:opacity-90'>
+                <button className='flex-shrink-0 rounded-sm bg-orange px-8 py-2 hover:opacity-90'>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
                     viewBox='0 0 24 24'
                     strokeWidth={1.5}
                     stroke='currentColor'
-                    className='h-6 w-6'
+                    className='h-5 w-5 stroke-white'
                   >
                     <path
                       strokeLinecap='round'
