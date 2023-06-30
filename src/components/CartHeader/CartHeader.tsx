@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
+import useSearchProducts from 'src/hooks/useSearchProducts'
 import NavHeader from '../NavHeader/NavHeader'
 
 export default function CartHeader() {
+  const { onSubmitSearch, register } = useSearchProducts()
   return (
     <div className='border-b border-b-black/10'>
       <div className='bg-orange text-white'>
@@ -25,9 +27,10 @@ export default function CartHeader() {
               <div className='mx-4 h-8 w-[1px] bg-orange'></div>
               <div className='capitalize text-orange lg:text-xl'>Gio Hang</div>
             </Link>
-            <form className='mt-3 md:mt-0 md:w-[50%]'>
+            <form className='mt-3 md:mt-0 md:w-[50%]' onSubmit={onSubmitSearch}>
               <div className='flex rounded-sm border-2 border-orange'>
                 <input
+                  {...register('name')}
                   placeholder='Free ship'
                   type='text'
                   className='w-full flex-grow border-none bg-transparent px-3 py-1 text-black outline-none'
