@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { produce } from 'immer'
 import { keyBy } from 'lodash'
-import { useContext, useEffect, useMemo } from 'react'
+import { Fragment, useContext, useEffect, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import purchaseApi from 'src/apis/purchase.api'
@@ -140,166 +140,182 @@ export default function Cart() {
   return (
     <div className='bg-neutral-100 py-16'>
       <div className='container'>
-        <div className='overflow-auto'>
-          {/* OVERFLOW-AUTO GIUP CO SCROLL KHI MAN HINH NHO  */}
-          <div className='min-w-[1000px]'>
-            {/* render columns name */}
-            <div className='grid grid-cols-12 rounded-sm bg-white px-9 py-5 text-sm capitalize text-gray-500 shadow'>
-              <div className='col-span-6'>
-                <div className='flex items-center'>
-                  <div className='flex flex-shrink-0 items-center justify-center pr-3'>
-                    <input
-                      type='checkbox'
-                      className='h-5 w-5 accent-orange'
-                      checked={isAllChecked}
-                      onChange={handleCheckAll}
-                    />
+        {extendedPurchases.length > 0 ? (
+          <Fragment>
+            <div className='overflow-auto'>
+              {/* OVERFLOW-AUTO GIUP CO SCROLL KHI MAN HINH NHO  */}
+              <div className='min-w-[1000px]'>
+                {/* render columns name */}
+                <div className='grid grid-cols-12 rounded-sm bg-white px-9 py-5 text-sm capitalize text-gray-500 shadow'>
+                  <div className='col-span-6'>
+                    <div className='flex items-center'>
+                      <div className='flex flex-shrink-0 items-center justify-center pr-3'>
+                        <input
+                          type='checkbox'
+                          className='h-5 w-5 accent-orange'
+                          checked={isAllChecked}
+                          onChange={handleCheckAll}
+                        />
+                      </div>
+                      <div className='flex-grow text-black'>San pham</div>
+                    </div>
                   </div>
-                  <div className='flex-grow text-black'>San pham</div>
+                  <div className='col-span-6'>
+                    <div className='grid grid-cols-5 text-center'>
+                      <div className='col-span-2'>Don gia</div>
+                      <div className='col-span-1'>So luong</div>
+                      <div className='col-span-1'>So tien</div>
+                      <div className='col-span-1'>Thao tac</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className='col-span-6'>
-                <div className='grid grid-cols-5 text-center'>
-                  <div className='col-span-2'>Don gia</div>
-                  <div className='col-span-1'>So luong</div>
-                  <div className='col-span-1'>So tien</div>
-                  <div className='col-span-1'>Thao tac</div>
-                </div>
-              </div>
-            </div>
-            {/* render sp */}
-            {extendedPurchases.length > 0 && (
-              <div className='my-3 rounded-sm bg-white p-5 shadow'>
-                {extendedPurchases.map((purchase, index) => (
-                  <div
-                    key={purchase._id}
-                    className='mt-5 grid grid-cols-12 rounded-sm border border-gray-200 bg-white px-4 py-5 text-sm text-gray-500 first:mt-0'
-                  >
-                    <div className='col-span-6'>
-                      <div className='flex'>
-                        <div className='flex flex-shrink-0 items-center justify-center pr-3'>
-                          <input
-                            type='checkbox'
-                            className='h-5 w-5 accent-orange'
-                            checked={purchase.checked}
-                            onChange={handleCheck(index)}
-                          />
-                        </div>
-                        <div className='flex-grow'>
+                {/* render sp */}
+                {extendedPurchases.length > 0 && (
+                  <div className='my-3 rounded-sm bg-white p-5 shadow'>
+                    {extendedPurchases.map((purchase, index) => (
+                      <div
+                        key={purchase._id}
+                        className='mt-5 grid grid-cols-12 rounded-sm border border-gray-200 bg-white px-4 py-5 text-sm text-gray-500 first:mt-0'
+                      >
+                        <div className='col-span-6'>
                           <div className='flex'>
-                            <Link
-                              className='h-20 w-20 flex-shrink-0'
-                              to={`/${generateNameId({ name: purchase.product.name, id: purchase.product._id })}`}
-                            >
-                              <img src={purchase.product.image} alt={purchase.product.name} />
-                            </Link>
-                            <div className='flex-grow px-2 pb-2 pt-1'>
-                              <Link
-                                to={`/${generateNameId({ name: purchase.product.name, id: purchase.product._id })}`}
-                                className='line-clamp-2'
+                            <div className='flex flex-shrink-0 items-center justify-center pr-3'>
+                              <input
+                                type='checkbox'
+                                className='h-5 w-5 accent-orange'
+                                checked={purchase.checked}
+                                onChange={handleCheck(index)}
+                              />
+                            </div>
+                            <div className='flex-grow'>
+                              <div className='flex'>
+                                <Link
+                                  className='h-20 w-20 flex-shrink-0'
+                                  to={`/${generateNameId({ name: purchase.product.name, id: purchase.product._id })}`}
+                                >
+                                  <img src={purchase.product.image} alt={purchase.product.name} />
+                                </Link>
+                                <div className='flex-grow px-2 pb-2 pt-1'>
+                                  <Link
+                                    to={`/${generateNameId({ name: purchase.product.name, id: purchase.product._id })}`}
+                                    className='line-clamp-2'
+                                  >
+                                    {purchase.product.name}
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className='col-span-6'>
+                          <div className='grid grid-cols-5 items-center'>
+                            <div className='col-span-2'>
+                              <div className='flex items-center justify-center'>
+                                <span className='text-gray-300 line-through'>
+                                  d {formatCurrency(purchase.product.price_before_discount)}
+                                </span>
+                                <span className='ml-2 text-orange'>d {formatCurrency(purchase.product.price)}</span>
+                              </div>
+                            </div>
+                            <div className='col-span-1'>
+                              <QuantityController
+                                max={purchase.product.quantity}
+                                value={purchase.buy_count}
+                                classNameWrapper='flex items-center'
+                                onIncrease={(value) => handleQuantity(index, value, value <= purchase.product.quantity)}
+                                onDecrease={(value) => handleQuantity(index, value, value >= 1)}
+                                onType={handleTypeQuantity(index)}
+                                onFocusOut={
+                                  (value) =>
+                                    handleQuantity(
+                                      index,
+                                      value,
+                                      value >= 1 &&
+                                        value <= purchase.product.quantity &&
+                                        value !== (purchasesInCart as Purchase[])[index].buy_count
+                                      // để khi chỉ khi đổi giá trị mới gọi api, còn k thì sẽ ko gọi
+                                    )
+                                  // tái sử dụng cái này lại, khi focuse out ra thì nó sẽ gọi api
+                                }
+                                disabled={purchase.disabled}
+                              />
+                            </div>
+                            <div className='col-span-1 text-center'>
+                              <span className='text-orange'>
+                                d {formatCurrency(purchase.product.price * purchase.buy_count)}
+                              </span>
+                            </div>
+                            <div className='col-span-1 text-center'>
+                              <button
+                                onClick={handleDelete(index)}
+                                className='bg-none text-black transition-colors hover:text-orange'
                               >
-                                {purchase.product.name}
-                              </Link>
+                                Xoa
+                              </button>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className='col-span-6'>
-                      <div className='grid grid-cols-5 items-center'>
-                        <div className='col-span-2'>
-                          <div className='flex items-center justify-center'>
-                            <span className='text-gray-300 line-through'>
-                              d {formatCurrency(purchase.product.price_before_discount)}
-                            </span>
-                            <span className='ml-2 text-orange'>d {formatCurrency(purchase.product.price)}</span>
-                          </div>
-                        </div>
-                        <div className='col-span-1'>
-                          <QuantityController
-                            max={purchase.product.quantity}
-                            value={purchase.buy_count}
-                            classNameWrapper='flex items-center'
-                            onIncrease={(value) => handleQuantity(index, value, value <= purchase.product.quantity)}
-                            onDecrease={(value) => handleQuantity(index, value, value >= 1)}
-                            onType={handleTypeQuantity(index)}
-                            onFocusOut={
-                              (value) =>
-                                handleQuantity(
-                                  index,
-                                  value,
-                                  value >= 1 &&
-                                    value <= purchase.product.quantity &&
-                                    value !== (purchasesInCart as Purchase[])[index].buy_count
-                                  // để khi chỉ khi đổi giá trị mới gọi api, còn k thì sẽ ko gọi
-                                )
-                              // tái sử dụng cái này lại, khi focuse out ra thì nó sẽ gọi api
-                            }
-                            disabled={purchase.disabled}
-                          />
-                        </div>
-                        <div className='col-span-1 text-center'>
-                          <span className='text-orange'>
-                            d {formatCurrency(purchase.product.price * purchase.buy_count)}
-                          </span>
-                        </div>
-                        <div className='col-span-1 text-center'>
-                          <button
-                            onClick={handleDelete(index)}
-                            className='bg-none text-black transition-colors hover:text-orange'
-                          >
-                            Xoa
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
-            )}
-          </div>
-        </div>
-        {/* phai de the chua sticky o ngoai the overflow-AUTO */}
-        <div className='sticky bottom-0 z-10 mt-10 flex flex-col rounded-sm border border-gray-100 bg-white p-5 shadow sm:flex-row sm:items-center'>
-          <div className='flex items-center'>
-            <div className='flex flex-shrink-0 items-center justify-center pr-3'>
-              <input
-                type='checkbox'
-                className='h-5 w-5 accent-orange'
-                checked={isAllChecked}
-                onChange={handleCheckAll}
-              />
             </div>
-            <button className='mx-3 border-none bg-none' onClick={handleCheckAll}>
-              Chon tat ca ({extendedPurchases.length})
-            </button>
-            <button onClick={handleDeleteManyPurchases} className='mx-3 border-none bg-none'>
-              Xoa
-            </button>
-          </div>
+            {/* phai de the chua sticky o ngoai the overflow-AUTO */}
+            <div className='sticky bottom-0 z-10 mt-10 flex flex-col rounded-sm border border-gray-100 bg-white p-5 shadow sm:flex-row sm:items-center'>
+              <div className='flex items-center'>
+                <div className='flex flex-shrink-0 items-center justify-center pr-3'>
+                  <input
+                    type='checkbox'
+                    className='h-5 w-5 accent-orange'
+                    checked={isAllChecked}
+                    onChange={handleCheckAll}
+                  />
+                </div>
+                <button className='mx-3 border-none bg-none' onClick={handleCheckAll}>
+                  Chon tat ca ({extendedPurchases.length})
+                </button>
+                <button onClick={handleDeleteManyPurchases} className='mx-3 border-none bg-none'>
+                  Xoa
+                </button>
+              </div>
 
-          <div className='ml-auto mt-5 flex flex-col sm:mt-0 sm:flex-row sm:items-center'>
-            <div>
-              <div className='flex items-center justify-end'>
-                <div>Tong thanh toan ({checkedPurchasesCount} san pham): </div>
-                <div className='ml-2 text-2xl text-orange'>d{formatCurrency(totalCheckedPurchasePrice)}</div>
-              </div>
-              <div className='flex items-center justify-end text-sm'>
-                <div className='text-gray-500'>Tiet kiem</div>
-                <div className='ml-6 text-orange'>d{formatCurrency(totalCheckedPurchaseSavingPrice)}</div>
+              <div className='ml-auto mt-5 flex flex-col sm:mt-0 sm:flex-row sm:items-center'>
+                <div>
+                  <div className='flex items-center justify-end'>
+                    <div>Tong thanh toan ({checkedPurchasesCount} san pham): </div>
+                    <div className='ml-2 text-2xl text-orange'>d{formatCurrency(totalCheckedPurchasePrice)}</div>
+                  </div>
+                  <div className='flex items-center justify-end text-sm'>
+                    <div className='text-gray-500'>Tiet kiem</div>
+                    <div className='ml-6 text-orange'>d{formatCurrency(totalCheckedPurchaseSavingPrice)}</div>
+                  </div>
+                </div>
+                <div className='mt-2 flex justify-end sm:mt-0'>
+                  <Button
+                    onClick={handleBuyPurchases}
+                    disabled={buyPurchaseMutation.isLoading}
+                    className='ml-4 flex h-10 w-52 items-center justify-center bg-red-500 text-sm uppercase text-white hover:bg-red-600'
+                  >
+                    mua hang
+                  </Button>
+                </div>
               </div>
             </div>
-            <div className='mt-2 flex justify-end sm:mt-0'>
-              <Button
-                onClick={handleBuyPurchases}
-                disabled={buyPurchaseMutation.isLoading}
-                className='ml-4 flex h-10 w-52 items-center justify-center bg-red-500 text-sm uppercase text-white hover:bg-red-600'
+          </Fragment>
+        ) : (
+          <div className='text-center'>
+            <div className='mt-5 font-bold text-gray-400'>Giỏ hàng của bạn còn trống</div>
+            <div className='mt-5 text-center'>
+              <Link
+                to='/'
+                className=' rounded-sm bg-orange px-10 py-2 uppercase text-white transition-all hover:bg-orange/80'
               >
-                mua hang
-              </Button>
+                Mua ngay
+              </Link>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
