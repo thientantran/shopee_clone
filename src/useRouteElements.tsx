@@ -10,6 +10,7 @@ import ProductDetail from './pages/ProductDetail/ProductDetail'
 import ProductList from './pages/ProductList/ProductList'
 import Register from './pages/Register/Register'
 import ChangePassword from './pages/User/ChangePassword'
+import HistoryPurchase from './pages/User/HistoryPurchase'
 import Profile from './pages/User/Profile'
 import UserLayout from './pages/User/UserLayout'
 
@@ -64,6 +65,10 @@ export default function useRouteElements() {
             {
               path: '/user/password',
               element: <ChangePassword />
+            },
+            {
+              path: '/user/history',
+              element: <HistoryPurchase />
             }
           ]
         }
