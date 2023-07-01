@@ -8,8 +8,10 @@ import Cart from './pages/Cart/Cart'
 import Login from './pages/Login/Login'
 import ProductDetail from './pages/ProductDetail/ProductDetail'
 import ProductList from './pages/ProductList/ProductList'
-import Profile from './pages/Profile/Profile'
 import Register from './pages/Register/Register'
+import ChangePassword from './pages/User/ChangePassword'
+import Profile from './pages/User/Profile'
+import UserLayout from './pages/User/UserLayout'
 
 //login chua?
 function ProtectedRoute() {
@@ -40,20 +42,30 @@ export default function useRouteElements() {
       element: <ProtectedRoute />,
       children: [
         {
-          path: '/profile',
-          element: (
-            <MainLayout>
-              <Profile />
-            </MainLayout>
-          )
-        },
-        {
           path: '/cart',
           element: (
             <CartLayout>
               <Cart />
             </CartLayout>
           )
+        },
+        {
+          path: '/user',
+          element: (
+            <MainLayout>
+              <UserLayout />
+            </MainLayout>
+          ),
+          children: [
+            {
+              path: '/user/profile',
+              element: <Profile />
+            },
+            {
+              path: '/user/password',
+              element: <ChangePassword />
+            }
+          ]
         }
       ]
     },
