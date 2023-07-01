@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import userApi from 'src/apis/user.apis'
 import Button from 'src/components/Button/Button'
@@ -33,6 +34,17 @@ export default function Profile() {
     queryFn: userApi.getProfile
   })
   const profile = profileData?.data.data
+  console.log(profile)
+  useEffect(() => {
+    if (profile) {
+      setValue('name', profile.email)
+      setValue('phone', profile.phone)
+      setValue('address', profile.address)
+      setValue('avatar', profile.avatar)
+      setValue('date_of_birth', profile.date_of_birth ? new Date(profile.date_of_birth) : new Date(1990, 0, 1))
+    }
+  }, [profile, setValue])
+
   return (
     <div className='pd-10 rounded-sm bg-white px-2 shadow md:px-7 md:pb-20'>
       <div className='border-b border-b-gray-200 py-6'>
@@ -109,7 +121,10 @@ export default function Profile() {
           <div className='mt-2 flex flex-col flex-wrap sm:flex-row'>
             <div className='w-[20%] truncate pt-3 text-right capitalize' />
             <div className='sm:w-[80%] sm:pl-5'>
-              <Button className='flex h-9 items-center bg-orange px-5 text-center text-sm text-white hover:bg-orange/80'>
+              <Button
+                type='submit'
+                className='flex h-9 items-center bg-orange px-5 text-center text-sm text-white hover:bg-orange/80'
+              >
                 Luu
               </Button>
             </div>
@@ -125,7 +140,10 @@ export default function Profile() {
               />
             </div>
             <input type='file' className='hidden' accept='.jpg, .jpeg,.png' />
-            <button className='flex h-10 items-center justify-end rounded-sm border bg-white px-6 text-sm text-gray-600 shadow-sm'>
+            <button
+              type='button'
+              className='flex h-10 items-center justify-end rounded-sm border bg-white px-6 text-sm text-gray-600 shadow-sm'
+            >
               Chon anh
             </button>
             <div className='mt-3 text-gray-400'>
