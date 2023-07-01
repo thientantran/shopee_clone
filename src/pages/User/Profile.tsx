@@ -1,9 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useQuery } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import userApi from 'src/apis/user.apis'
 import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input/Input'
+import InputNumber from 'src/components/InputNumber/InputNumber'
 import { UserSchema, userSchema } from 'src/utils/rules'
 
 type FormData = Pick<UserSchema, 'name' | 'address' | 'phone' | 'date_of_birth' | 'avatar'>
@@ -31,6 +32,7 @@ export default function Profile() {
     queryKey: ['profile'],
     queryFn: userApi.getProfile
   })
+  const profile = profileData?.data.data
   return (
     <div className='pd-10 rounded-sm bg-white px-2 shadow md:px-7 md:pb-20'>
       <div className='border-b border-b-gray-200 py-6'>
@@ -42,25 +44,50 @@ export default function Profile() {
           <div className='flex flex-wrap'>
             <div className='w-[20%] truncate pt-3 text-right capitalize'>Email</div>
             <div className='w-[80%] pl-5'>
-              <div className='pt-3 text-gray-700'>tantran@gmail.com</div>
+              <div className='pt-3 text-gray-700'>{profile?.email}</div>
             </div>
           </div>
           <div className='mt-6 flex flex-col flex-wrap sm:flex-row'>
             <div className='w-[20%] truncate pt-3 text-right capitalize'>Ten</div>
             <div className='w-[80%] pl-5'>
-              <Input classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm' />
+              <Input
+                register={register}
+                name='name'
+                placeholder='Ten'
+                errorMessage={errors.name?.message}
+                classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm'
+              />
             </div>
           </div>
           <div className='mt-2 flex flex-col flex-wrap sm:flex-row'>
             <div className='w-[20%] truncate pt-3 text-right capitalize'>So dien thoai</div>
             <div className='w-[80%] pl-5'>
-              <Input classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm' />
+              <Controller
+                control={control}
+                name='phone'
+                render={({ field }) => (
+                  <InputNumber
+                    classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm'
+                    placeholder='So dien thoai'
+                    errorMessage={errors.phone?.message}
+                    {...field}
+                    onChange={field.onChange}
+                    // phai de onChange phia sau, do field co generate ra onChange, nen de onChange phia sau de overwrite
+                  />
+                )}
+              />
             </div>
           </div>
           <div className='mt-2 flex flex-col flex-wrap sm:flex-row'>
             <div className='w-[20%] truncate pt-3 text-right capitalize'>Dia chi</div>
             <div className='w-[80%] pl-5'>
-              <Input classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm' />
+              <Input
+                register={register}
+                name='address'
+                placeholder='Dia Chi'
+                errorMessage={errors.address?.message}
+                classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm'
+              />
             </div>
           </div>
           <div className='mt-2 flex flex-col flex-wrap sm:flex-row'>
