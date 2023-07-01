@@ -49,6 +49,11 @@ class Http {
           const message: string = data.message || error.message
           toast.error(message)
         }
+        if (error.response?.status === HttpStatusCode.Unauthorized) {
+          clearLS()
+          // cach 1 - reset lai page:
+          // window.location.reload()
+        }
         return Promise.reject(error)
       }
     )
