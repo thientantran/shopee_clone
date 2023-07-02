@@ -15,7 +15,8 @@ export default function ChangePassword() {
             <div className='w-[80%] pl-5'>
               <Input
                 // register={register}
-                name='address'
+                name='password'
+                type='password'
                 placeholder='Nhập mật khẩu cũ'
                 // errorMessage={errors.address?.message}
                 classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm'
@@ -27,7 +28,8 @@ export default function ChangePassword() {
             <div className='w-[80%] pl-5'>
               <Input
                 // register={register}
-                name='address'
+                name='new_password'
+                type='password'
                 placeholder='Nhập mật khẩu mới'
                 // errorMessage={errors.address?.message}
                 classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm'
@@ -39,7 +41,8 @@ export default function ChangePassword() {
             <div className='w-[80%] pl-5'>
               <Input
                 // register={register}
-                name='address'
+                name='confirm_password'
+                type='password'
                 placeholder='Xác nhận mật khẩu'
                 // errorMessage={errors.address?.message}
                 classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm'
