@@ -46,7 +46,7 @@ class Http {
           // const message = error.response?.data.message
           // ko duoc, do ko biet error.response.data la type gi
           const data: any | undefined = error.response?.data
-          const message: string = data.message || error.message
+          const message: string = data?.message || error.message
           toast.error(message)
         }
         if (error.response?.status === HttpStatusCode.Unauthorized) {

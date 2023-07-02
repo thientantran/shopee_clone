@@ -8,14 +8,18 @@ import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input/Input'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import { AppContext } from 'src/contexts/api.context'
+import { ErrorResponse } from 'src/types/utils.type'
 import { setProfileToLS } from 'src/utils/auth'
 import { UserSchema, userSchema } from 'src/utils/rules'
-import { getAvatarURL } from 'src/utils/utils'
+import { getAvatarURL, isAxiosUnprocessableEntityError } from 'src/utils/utils'
 import DateSelect from './component/DateSelect'
 // có 2 flows để upload ảnh lên
 // flow 1: sau khi bấm nút chọn ảnh thì ảnh sẽ được đưa lên server lun, rồi server trả về URL cho ảnh, sau đó nhấn submit thì gửi thông tin lên lại server để lưu URL
 // flow 2: chỉ khi bấm lưu mới gửi ảnh lên server, sau đó mới gọi api để tiến hành upload profile: cách này chậm hơn do gọi 2 api nhưng ko bỉ spam ảnh nhiều lên server
 type FormData = Pick<UserSchema, 'name' | 'address' | 'phone' | 'date_of_birth' | 'avatar'>
+type FormDataError = Omit<FormData, 'date_of_birth'> & {
+  date_of_birth?: string
+}
 const profileSchema = userSchema.pick(['name', 'address', 'phone', 'date_of_birth', 'avatar'])
 export default function Profile() {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -81,7 +85,17 @@ export default function Profile() {
       refetch()
       toast.success(res.data.message)
     } catch (error) {
-      console.log(error)
+      if (isAxiosUnprocessableEntityError<ErrorResponse<FormDataError>>(error)) {
+        const formError = error.response?.data.data
+        if (formError) {
+          Object.keys(formError).forEach((key) => {
+            setError(key as keyof FormDataError, {
+              message: formError[key as keyof FormDataError],
+              type: 'Server'
+            })
+          })
+        }
+      }
     }
   })
   const handleUpload = () => {
