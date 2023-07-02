@@ -1,19 +1,73 @@
-export default function DateSelect() {
+import { range } from 'lodash'
+import { useState } from 'react'
+
+interface Props_ {
+  onChange?: (value: Date) => void
+  value?: Date
+  errorMessage?: string
+}
+
+export default function DateSelect({ value, onChange, errorMessage }: Props_) {
+  const [date, setDate] = useState({
+    date: value?.getDate() || 1,
+    month: value?.getMonth() || 1,
+    year: value?.getFullYear() || 1990
+  })
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value, name } = event.target
+    const newDate = {
+      ...date,
+      [name]: value
+    }
+    setDate(newDate)
+    onChange && onChange(new Date(newDate.year, newDate.month, newDate.date))
+  }
   return (
     <div className='mt-2 flex flex-col flex-wrap sm:flex-row'>
       <div className='w-[20%] truncate pt-3 text-right capitalize'>Ngay sinh</div>
       <div className='w-[80%] pl-5'>
         <div className='flex justify-between'>
-          <select className='h-10 w-[32%] rounded-sm border border-black/10 px-3'>
+          <select
+            onChange={handleChange}
+            name='date'
+            className='h-10 w-[32%] cursor-pointer rounded-sm border border-black/10 px-3 hover:border-orange'
+            value={value?.getDate() || date.date}
+          >
             <option disabled>Ngay</option>
+            {range(1, 32).map((item) => (
+              <option value={item} key={item}>
+                {item}
+              </option>
+            ))}
           </select>
-          <select className='h-10 w-[32%] rounded-sm border border-black/10 px-3'>
+          <select
+            onChange={handleChange}
+            name='month'
+            className='h-10 w-[32%] cursor-pointer rounded-sm border border-black/10 px-3 hover:border-orange'
+            value={value?.getMonth() || date.month}
+          >
             <option disabled>Thang</option>
+            {range(1, 13).map((item) => (
+              <option value={item} key={item}>
+                {item}
+              </option>
+            ))}
           </select>
-          <select className='h-10 w-[32%] rounded-sm border border-black/10 px-3'>
+          <select
+            onChange={handleChange}
+            name='year'
+            className='h-10 w-[32%] cursor-pointer rounded-sm border border-black/10 px-3 hover:border-orange'
+            value={value?.getFullYear() || date.year}
+          >
             <option disabled>Nam</option>
+            {range(1990, 2030).map((item) => (
+              <option value={item} key={item}>
+                {item}
+              </option>
+            ))}
           </select>
         </div>
+        <div className='mt-1 min-h-[1.25rem] text-sm text-red-600'>{errorMessage}</div>
       </div>
     </div>
   )

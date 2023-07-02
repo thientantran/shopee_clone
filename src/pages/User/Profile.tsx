@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import userApi from 'src/apis/user.apis'
@@ -35,7 +35,7 @@ export default function Profile() {
     queryFn: userApi.getProfile
   })
   const profile = profileData?.data.data
-  console.log(profile)
+  const updateProfileMutation = useMutation(userApi.updateProfile)
   useEffect(() => {
     if (profile) {
       setValue('name', profile.name)
@@ -45,14 +45,17 @@ export default function Profile() {
       setValue('date_of_birth', profile.date_of_birth ? new Date(profile.date_of_birth) : new Date(1990, 0, 1))
     }
   }, [profile, setValue])
-
+  const onSubmit = handleSubmit(async (data) => {
+    // await updateProfileMutation.mutateAsync()
+    console.log(data)
+  })
   return (
     <div className='pd-10 rounded-sm bg-white px-2 shadow md:px-7 md:pb-20'>
       <div className='border-b border-b-gray-200 py-6'>
         <h1 className='text-lg font-medium capitalize text-gray-900'>Ho so cua toi</h1>
         <div className='mt-1 text-sm text-gray-700'>Quan ly thong tin ho so de bao mat tai khoan</div>
       </div>
-      <form className='mt-8 flex flex-col-reverse md:flex-row md:items-start'>
+      <form className='mt-8 flex flex-col-reverse md:flex-row md:items-start' onSubmit={onSubmit}>
         <div className='mt-6 flex-grow md:mt-0 md:pr-12'>
           <div className='flex flex-wrap'>
             <div className='w-[20%] truncate pt-3 text-right capitalize'>Email</div>
@@ -103,7 +106,14 @@ export default function Profile() {
               />
             </div>
           </div>
-          <DateSelect />
+          <Controller
+            control={control}
+            name='date_of_birth'
+            render={({ field }) => (
+              <DateSelect errorMessage={errors.date_of_birth?.message} value={field.value} onChange={field.onChange} />
+            )}
+          />
+
           <div className='mt-2 flex flex-col flex-wrap sm:flex-row'>
             <div className='w-[20%] truncate pt-3 text-right capitalize' />
             <div className='sm:w-[80%] sm:pl-5'>
