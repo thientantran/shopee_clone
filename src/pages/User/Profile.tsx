@@ -30,7 +30,7 @@ export default function Profile() {
     },
     resolver: yupResolver(profileSchema)
   })
-  const { data: profileData } = useQuery({
+  const { data: profileData, refetch } = useQuery({
     queryKey: ['profile'],
     queryFn: userApi.getProfile
   })
@@ -46,8 +46,11 @@ export default function Profile() {
     }
   }, [profile, setValue])
   const onSubmit = handleSubmit(async (data) => {
-    // await updateProfileMutation.mutateAsync()
-    console.log(data)
+    await updateProfileMutation.mutateAsync({
+      ...data,
+      date_of_birth: data.date_of_birth?.toISOString()
+    })
+    refetch()
   })
   return (
     <div className='pd-10 rounded-sm bg-white px-2 shadow md:px-7 md:pb-20'>

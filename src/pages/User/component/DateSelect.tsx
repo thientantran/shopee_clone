@@ -1,5 +1,5 @@
 import { range } from 'lodash'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface Props_ {
   onChange?: (value: Date) => void
@@ -10,14 +10,26 @@ interface Props_ {
 export default function DateSelect({ value, onChange, errorMessage }: Props_) {
   const [date, setDate] = useState({
     date: value?.getDate() || 1,
-    month: value?.getMonth() || 1,
+    month: value?.getMonth() || 0,
     year: value?.getFullYear() || 1990
   })
+
+  useEffect(() => {
+    if (value) {
+      setDate({
+        date: value?.getDate(),
+        month: value?.getMonth(),
+        year: value?.getFullYear()
+      })
+    }
+  }, [value])
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value, name } = event.target
+    const { value: valueFromSelect, name } = event.target
     const newDate = {
-      ...date,
-      [name]: value
+      date: value?.getDate() || date.date,
+      month: value?.getMonth() || date.month,
+      year: value?.getFullYear() || date.year,
+      [name]: Number(valueFromSelect)
     }
     setDate(newDate)
     onChange && onChange(new Date(newDate.year, newDate.month, newDate.date))
@@ -47,9 +59,9 @@ export default function DateSelect({ value, onChange, errorMessage }: Props_) {
             value={value?.getMonth() || date.month}
           >
             <option disabled>Thang</option>
-            {range(1, 13).map((item) => (
+            {range(0, 12).map((item) => (
               <option value={item} key={item}>
-                {item}
+                {item + 1}
               </option>
             ))}
           </select>

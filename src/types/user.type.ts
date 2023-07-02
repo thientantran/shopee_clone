@@ -7,8 +7,8 @@ export interface User {
   avatar?: string
   address?: string
   phone?: string
-  createAt: string
-  updateAt: string
+  createdAt: string
+  updatedAt: string
   _v: number
 }
 
