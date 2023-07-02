@@ -1,5 +1,6 @@
+import classNames from 'classnames'
 import { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { AppContext } from 'src/contexts/api.context'
 import { getAvatarURL } from 'src/utils/utils'
 
@@ -39,24 +40,48 @@ export default function UserSideNav() {
         </div>
       </div>
       <div className='mt-7'>
-        <Link className='transiton-colors flex items-center capitalize text-gray-600' to='/user/profile'>
+        <NavLink
+          className={({ isActive }) =>
+            classNames('transiton-colors flex items-center capitalize', {
+              'text-orange': isActive,
+              'text-gray-600': !isActive
+            })
+          }
+          to='/user/profile'
+        >
           <div className='mr-3 h-[22px] w-[22px]'>
             <img alt='avatar' src='https://down-vn.img.susercontent.com/file/ba61750a46794d8847c3f463c5e71cc4' />
           </div>
           Tai khoan cua toi
-        </Link>
-        <Link className='transiton-colors mt-4 flex items-center capitalize text-gray-600' to='/user/password'>
+        </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            classNames('transiton-colors capitaliz mt-4 flex items-center', {
+              'text-orange': isActive,
+              'text-gray-600': !isActive
+            })
+          }
+          to='/user/password'
+        >
           <div className='mr-3 h-[22px] w-[22px]'>
             <img alt='password' src='https://down-vn.img.susercontent.com/file/84feaa363ce325071c0a66d3c9a88748' />
           </div>
           Doi mat khau
-        </Link>
-        <Link className='transiton-colors mt-4 flex items-center capitalize text-gray-600' to='/user/history'>
+        </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            classNames('transiton-colors mt-4 flex items-center capitalize', {
+              'text-orange': isActive,
+              'text-gray-600': !isActive
+            })
+          }
+          to='/user/history'
+        >
           <div className='mr-3 h-[22px] w-[22px]'>
             <img alt='history' src='https://down-vn.img.susercontent.com/file/f0049e9df4e536bc3e7f140d071e9078' />
           </div>
           Lich su mua hang
-        </Link>
+        </NavLink>
       </div>
     </div>
   )
