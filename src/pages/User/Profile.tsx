@@ -10,8 +10,11 @@ import InputNumber from 'src/components/InputNumber/InputNumber'
 import { AppContext } from 'src/contexts/api.context'
 import { setProfileToLS } from 'src/utils/auth'
 import { UserSchema, userSchema } from 'src/utils/rules'
+import { getAvatarURL } from 'src/utils/utils'
 import DateSelect from './component/DateSelect'
-
+// có 2 flows để upload ảnh lên
+// flow 1: sau khi bấm nút chọn ảnh thì ảnh sẽ được đưa lên server lun, rồi server trả về URL cho ảnh, sau đó nhấn submit thì gửi thông tin lên lại server để lưu URL
+// flow 2: chỉ khi bấm lưu mới gửi ảnh lên server, sau đó mới gọi api để tiến hành upload profile: cách này chậm hơn do gọi 2 api nhưng ko bỉ spam ảnh nhiều lên server
 type FormData = Pick<UserSchema, 'name' | 'address' | 'phone' | 'date_of_birth' | 'avatar'>
 const profileSchema = userSchema.pick(['name', 'address', 'phone', 'date_of_birth', 'avatar'])
 export default function Profile() {
@@ -41,12 +44,14 @@ export default function Profile() {
     resolver: yupResolver(profileSchema)
   })
   const avatar = watch('avatar')
+  // dùng watch để lấy thông tin
   const { data: profileData, refetch } = useQuery({
     queryKey: ['profile'],
     queryFn: userApi.getProfile
   })
   const profile = profileData?.data.data
   const updateProfileMutation = useMutation(userApi.updateProfile)
+  const uploadAvatarMutation = useMutation(userApi.uploadAvatar)
   useEffect(() => {
     if (profile) {
       setValue('name', profile.name)
@@ -57,14 +62,27 @@ export default function Profile() {
     }
   }, [profile, setValue])
   const onSubmit = handleSubmit(async (data) => {
-    const res = await updateProfileMutation.mutateAsync({
-      ...data,
-      date_of_birth: data.date_of_birth?.toISOString()
-    })
-    refetch()
-    setProfile(res.data.data)
-    setProfileToLS(res.data.data)
-    toast.success(res.data.message)
+    try {
+      let avatarName = avatar
+      if (file) {
+        const form = new FormData()
+        form.append('image', file)
+        const uploadRes = await uploadAvatarMutation.mutateAsync(form)
+        avatarName = uploadRes.data.data
+        setValue('avatar', avatarName)
+      }
+      const res = await updateProfileMutation.mutateAsync({
+        ...data,
+        date_of_birth: data.date_of_birth?.toISOString(),
+        avatar: avatarName
+      })
+      setProfile(res.data.data)
+      setProfileToLS(res.data.data)
+      refetch()
+      toast.success(res.data.message)
+    } catch (error) {
+      console.log(error)
+    }
   })
   const handleUpload = () => {
     fileInputRef.current?.click()
@@ -153,7 +171,11 @@ export default function Profile() {
         <div className='flex justify-center md:w-72 md:border-l md:border-l-gray-200'>
           <div className='flex flex-col items-center'>
             <div className='my-5 h-24 w-24'>
-              <img src={previewImage || avatar} alt='avatar' className='f-full w-full rounded-full object-cover' />
+              <img
+                src={previewImage || getAvatarURL(profile?.avatar)}
+                alt='avatar'
+                className='f-full w-full rounded-full object-cover'
+              />
             </div>
             <input
               type='file'

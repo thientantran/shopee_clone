@@ -5,6 +5,7 @@ import authApi from 'src/apis/auth.api'
 import { purchasesStatus } from 'src/constants/purchase'
 import { AppContext } from 'src/contexts/api.context'
 import { queryClient } from 'src/main'
+import { getAvatarURL } from 'src/utils/utils'
 import Popover from '../Popover/Popover'
 export default function NavHeader() {
   const { isAuthenticated, setIsAuthenticated, setProfile, profile } = useContext(AppContext)
@@ -84,11 +85,7 @@ export default function NavHeader() {
           className='ml-6 flex cursor-pointer items-center py-1 hover:text-gray-300'
         >
           <div className='mr-2 h-6 w-6 flex-shrink-0'>
-            <img
-              src={profile?.avatar || 'https://down-vn.img.susercontent.com/file/br-11134226-7qukw-levcx0zgr2n3d2_tn'}
-              alt='avatar'
-              className='h-full w-full rounded-full object-cover'
-            />
+            <img src={getAvatarURL(profile?.avatar)} alt='avatar' className='h-full w-full rounded-full object-cover' />
           </div>
           <div>{profile?.name || profile?.email}</div>
         </Popover>
