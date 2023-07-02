@@ -103,7 +103,11 @@ export default function Profile() {
   }
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileFromLocal = event.target.files?.[0]
-    setFile(fileFromLocal)
+    if (fileFromLocal && (fileFromLocal.size >= 1048576 || fileFromLocal.type.includes('images'))) {
+      toast.error('File không đúng quy định')
+    } else {
+      setFile(fileFromLocal)
+    }
   }
   return (
     <div className='pd-10 rounded-sm bg-white px-2 shadow md:px-7 md:pb-20'>
@@ -197,6 +201,11 @@ export default function Profile() {
               accept='.jpg, .jpeg,.png'
               ref={fileInputRef}
               onChange={onFileChange}
+              // onchange này chỉ kích hoạt khi 2 lần chọn 2 tấm ảnh khác nhau, để fix thì dùng onclick và set lại
+              onClick={(event) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ;(event.target as any).value = null
+              }}
             />
             <button
               type='button'
