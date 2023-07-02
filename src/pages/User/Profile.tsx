@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import userApi from 'src/apis/user.apis'
@@ -15,6 +15,12 @@ import DateSelect from './component/DateSelect'
 type FormData = Pick<UserSchema, 'name' | 'address' | 'phone' | 'date_of_birth' | 'avatar'>
 const profileSchema = userSchema.pick(['name', 'address', 'phone', 'date_of_birth', 'avatar'])
 export default function Profile() {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  // Tạo cái này để liên kết với nút button, khi nào nut button click thì nó ref tới chỗ choose file
+  const [file, setFile] = useState<File>()
+  const previewImage = useMemo(() => {
+    return file ? URL.createObjectURL(file) : ''
+  }, [file])
   const { setProfile, profile: profileFromLS } = useContext(AppContext)
   const {
     register,
@@ -34,6 +40,7 @@ export default function Profile() {
     },
     resolver: yupResolver(profileSchema)
   })
+  const avatar = watch('avatar')
   const { data: profileData, refetch } = useQuery({
     queryKey: ['profile'],
     queryFn: userApi.getProfile
@@ -59,6 +66,13 @@ export default function Profile() {
     setProfileToLS(res.data.data)
     toast.success(res.data.message)
   })
+  const handleUpload = () => {
+    fileInputRef.current?.click()
+  }
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileFromLocal = event.target.files?.[0]
+    setFile(fileFromLocal)
+  }
   return (
     <div className='pd-10 rounded-sm bg-white px-2 shadow md:px-7 md:pb-20'>
       <div className='border-b border-b-gray-200 py-6'>
@@ -139,16 +153,19 @@ export default function Profile() {
         <div className='flex justify-center md:w-72 md:border-l md:border-l-gray-200'>
           <div className='flex flex-col items-center'>
             <div className='my-5 h-24 w-24'>
-              <img
-                src='https://down-vn.img.susercontent.com/file/br-11134226-7qukw-levcx0zgr2n3d2_tn'
-                alt='avatar'
-                className='f-full w-full rounded-full object-cover'
-              />
+              <img src={previewImage || avatar} alt='avatar' className='f-full w-full rounded-full object-cover' />
             </div>
-            <input type='file' className='hidden' accept='.jpg, .jpeg,.png' />
+            <input
+              type='file'
+              className='hidden'
+              accept='.jpg, .jpeg,.png'
+              ref={fileInputRef}
+              onChange={onFileChange}
+            />
             <button
               type='button'
               className='flex h-10 items-center justify-end rounded-sm border bg-white px-6 text-sm text-gray-600 shadow-sm'
+              onClick={handleUpload}
             >
               Chon anh
             </button>
