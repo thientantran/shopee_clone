@@ -1,11 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import userApi from 'src/apis/user.apis'
 import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input/Input'
+import InputFile from 'src/components/InputFile/InputFile'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import { AppContext } from 'src/contexts/api.context'
 import { ErrorResponse } from 'src/types/utils.type'
@@ -22,8 +23,6 @@ type FormDataError = Omit<FormData, 'date_of_birth'> & {
 }
 const profileSchema = userSchema.pick(['name', 'address', 'phone', 'date_of_birth', 'avatar'])
 export default function Profile() {
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  // Tạo cái này để liên kết với nút button, khi nào nut button click thì nó ref tới chỗ choose file
   const [file, setFile] = useState<File>()
   const previewImage = useMemo(() => {
     return file ? URL.createObjectURL(file) : ''
@@ -98,16 +97,8 @@ export default function Profile() {
       }
     }
   })
-  const handleUpload = () => {
-    fileInputRef.current?.click()
-  }
-  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileFromLocal = event.target.files?.[0]
-    if (fileFromLocal && (fileFromLocal.size >= 1048576 || fileFromLocal.type.includes('images'))) {
-      toast.error('File không đúng quy định')
-    } else {
-      setFile(fileFromLocal)
-    }
+  const handleChangeFile = (file?: File) => {
+    setFile(file)
   }
   return (
     <div className='pd-10 rounded-sm bg-white px-2 shadow md:px-7 md:pb-20'>
@@ -195,25 +186,7 @@ export default function Profile() {
                 className='f-full w-full rounded-full object-cover'
               />
             </div>
-            <input
-              type='file'
-              className='hidden'
-              accept='.jpg, .jpeg,.png'
-              ref={fileInputRef}
-              onChange={onFileChange}
-              // onchange này chỉ kích hoạt khi 2 lần chọn 2 tấm ảnh khác nhau, để fix thì dùng onclick và set lại
-              onClick={(event) => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                ;(event.target as any).value = null
-              }}
-            />
-            <button
-              type='button'
-              className='flex h-10 items-center justify-end rounded-sm border bg-white px-6 text-sm text-gray-600 shadow-sm'
-              onClick={handleUpload}
-            >
-              Chon anh
-            </button>
+            <InputFile onChange={handleChangeFile} />
             <div className='mt-3 text-gray-400'>
               <div>Dung luong file toi da 1MB</div>
               <div>Dinh dang: .JPEG, .PNG</div>

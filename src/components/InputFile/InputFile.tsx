@@ -1,6 +1,9 @@
 import { Fragment, useRef } from 'react'
 import { toast } from 'react-toastify'
-export default function InputFile() {
+interface Props {
+  onChange?: (file?: File) => void
+}
+export default function InputFile({ onChange }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   // Tạo cái này để liên kết với nút button, khi nào nut button click thì nó ref tới chỗ choose file
   const handleUpload = () => {
@@ -11,7 +14,7 @@ export default function InputFile() {
     if (fileFromLocal && (fileFromLocal.size >= 1048576 || fileFromLocal.type.includes('images'))) {
       toast.error('File không đúng quy định')
     } else {
-      setFile(fileFromLocal)
+      onChange && onChange(fileFromLocal)
     }
   }
   return (
