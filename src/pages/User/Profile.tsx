@@ -7,6 +7,7 @@ import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input/Input'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import { UserSchema, userSchema } from 'src/utils/rules'
+import DateSelect from './component/DateSelect'
 
 type FormData = Pick<UserSchema, 'name' | 'address' | 'phone' | 'date_of_birth' | 'avatar'>
 const profileSchema = userSchema.pick(['name', 'address', 'phone', 'date_of_birth', 'avatar'])
@@ -37,7 +38,7 @@ export default function Profile() {
   console.log(profile)
   useEffect(() => {
     if (profile) {
-      setValue('name', profile.email)
+      setValue('name', profile.name)
       setValue('phone', profile.phone)
       setValue('address', profile.address)
       setValue('avatar', profile.avatar)
@@ -102,22 +103,7 @@ export default function Profile() {
               />
             </div>
           </div>
-          <div className='mt-2 flex flex-col flex-wrap sm:flex-row'>
-            <div className='w-[20%] truncate pt-3 text-right capitalize'>Ngay sinh</div>
-            <div className='w-[80%] pl-5'>
-              <div className='flex justify-between'>
-                <select className='h-10 w-[32%] rounded-sm border border-black/10 px-3'>
-                  <option disabled>Ngay</option>
-                </select>
-                <select className='h-10 w-[32%] rounded-sm border border-black/10 px-3'>
-                  <option disabled>Thang</option>
-                </select>
-                <select className='h-10 w-[32%] rounded-sm border border-black/10 px-3'>
-                  <option disabled>Nam</option>
-                </select>
-              </div>
-            </div>
-          </div>
+          <DateSelect />
           <div className='mt-2 flex flex-col flex-wrap sm:flex-row'>
             <div className='w-[20%] truncate pt-3 text-right capitalize' />
             <div className='sm:w-[80%] sm:pl-5'>
@@ -148,7 +134,7 @@ export default function Profile() {
             </button>
             <div className='mt-3 text-gray-400'>
               <div>Dung luong file toi da 1MB</div>
-              div.Dinh dang: .JPEG, .PNG
+              <div>Dinh dang: .JPEG, .PNG</div>
             </div>
           </div>
         </div>
