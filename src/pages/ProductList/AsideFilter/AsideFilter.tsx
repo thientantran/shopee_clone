@@ -24,7 +24,6 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
   const {
     control,
     handleSubmit,
-    watch,
     trigger,
     formState: { errors }
   } = useForm<FormData>({
@@ -36,8 +35,6 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
     shouldFocusError: false
   })
   const navigate = useNavigate()
-  const valueForm = watch()
-  console.log('error', errors)
   const onSubmit = handleSubmit(
     (data) => {
       // console.log('data', data)
