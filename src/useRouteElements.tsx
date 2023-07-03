@@ -6,6 +6,7 @@ import MainLayout from './lauputs/MainLayout/MainLayout'
 import RegisterLayout from './lauputs/RegisterLayout/RegisterLayout'
 import Cart from './pages/Cart/Cart'
 import Login from './pages/Login/Login'
+import PageNotFound from './pages/PageNotFound/PageNotFound'
 import ProductDetail from './pages/ProductDetail/ProductDetail'
 import ProductList from './pages/ProductList/ProductList'
 import Register from './pages/Register/Register'
@@ -111,6 +112,14 @@ export default function useRouteElements() {
       element: (
         <MainLayout>
           <ProductList />
+        </MainLayout>
+      )
+    },
+    {
+      path: '*',
+      element: (
+        <MainLayout>
+          <PageNotFound />
         </MainLayout>
       )
     }
